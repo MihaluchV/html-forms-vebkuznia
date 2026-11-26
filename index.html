@@ -253,7 +253,7 @@ const SCRIPT_URL="https://script.google.com/macros/s/AKfycby5JuoBDhkyMaeFKb3bjrh
 const MAXATT=3;          // спроб на кожен тікет
 const PROMO=[0.5,2/3];   // частка балів спринту для підвищення: до Junior — 2 з 4, до Middle — 2 з 3
 const SAVE="vebkuznia-forms-v1";
-const LV=[{n:'Стажер',full:'Стажер',cap:8,c:'#94a3b8'},{n:'Junior',full:'Junior (молодший розробник)',cap:10,c:'#22d3ee'},{n:'Middle',full:'Middle (розробник середнього рівня)',cap:12,c:'#b39dff'}];
+const LV=[{n:'Стажер',full:'Стажер',cap:6,c:'#94a3b8'},{n:'Junior',full:'Junior (молодший розробник)',cap:9,c:'#22d3ee'},{n:'Middle',full:'Middle (розробник середнього рівня)',cap:12,c:'#b39dff'}];
 const WHO={pm:{n:'Олена Коваль',r:'менеджерка проєкту (Project Manager)',e:'👩‍💼',c:'#f59e0b'},lead:{n:'Андрій Мельник',r:'тімлід (Team Lead)',e:'👨‍💻',c:'#7c5cff'},qa:{n:'Марта Бондар',r:'тестувальниця (QA-інженерка)',e:'🕵️‍♀️',c:'#22d3ee'},client:{n:'Ганна Петрівна',r:'директорка ліцею «Обрій», замовниця',e:'🏫',c:'#34d399'}};
 
 /* ================= помічники ================= */
@@ -577,7 +577,7 @@ function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
 const closedT=i=>{const t=S.t[i];return t.att>=MAXATT||(t.best&&t.best.p===1)};
 const open=i=>T[i].sp<=S.lvl;
 function sprintInfo(k){const ids=T.map((t,i)=>i).filter(i=>T[i].sp===k);return{ids,checked:ids.filter(i=>S.t[i].att>0).length,P:ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),need:ids.length*(PROMO[k]||1),max:ids.length,canImprove:ids.some(i=>!closedT(i))}}
-/* оцінка «сходинками»: спринт 1 дає до 8, спринт 2 додає до 2 (8→10), спринт 3 — ще до 2 (10→12); підвищення ніколи не знижує оцінку */
+/* оцінка «сходинками»: спринт 1 дає до 6, спринт 2 додає до 3 (6→9), спринт 3 — ще до 3 (9→12); підвищення ніколи не знижує оцінку */
 function totals(){const ids=T.map((t,i)=>i).filter(open),P=ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),M=ids.length;
  const sp=[0,1,2].map(k=>{const w=LV[k].cap-(k?LV[k-1].cap:0),js=T.map((t,i)=>i).filter(i=>T[i].sp===k),p=k<=S.lvl?js.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0):0;return{k,w,p,max:js.length,add:k<=S.lvl?w*p/js.length:0,open:k<=S.lvl}});
  const raw=sp.reduce((a,x)=>a+x.add,0);
