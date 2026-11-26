@@ -251,7 +251,7 @@ select.asel{font:600 13px "JetBrains Mono",monospace;padding:5px 8px;min-height:
 /* ================= налаштування ================= */
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycby5JuoBDhkyMaeFKb3bjrhbHsIZIhM4f741IKFEZzoxtfYlNnycEXdbmtxjUtl1QQYyRw/exec",KEY="змініть-на-свій-ключ",TASK="HTML. Форми — замовлення ВебКузні";
 const MAXATT=3;          // спроб на кожен тікет
-const PROMO=[0.5,0.75];  // частка балів спринту для підвищення: до Junior — 2 з 4, до Middle — 3 з 4
+const PROMO=[0.5,2/3];   // частка балів спринту для підвищення: до Junior — 2 з 4, до Middle — 2 з 3
 const SAVE="vebkuznia-forms-v1";
 const LV=[{n:'Стажер',full:'Стажер',cap:8,c:'#94a3b8'},{n:'Junior',full:'Junior (молодший розробник)',cap:10,c:'#22d3ee'},{n:'Middle',full:'Middle (розробник середнього рівня)',cap:12,c:'#b39dff'}];
 const WHO={pm:{n:'Олена Коваль',r:'менеджерка проєкту (Project Manager)',e:'👩‍💼',c:'#f59e0b'},lead:{n:'Андрій Мельник',r:'тімлід (Team Lead)',e:'👨‍💻',c:'#7c5cff'},qa:{n:'Марта Бондар',r:'тестувальниця (QA-інженерка)',e:'🕵️‍♀️',c:'#22d3ee'},client:{n:'Ганна Петрівна',r:'директорка ліцею «Обрій», замовниця',e:'🏫',c:'#34d399'}};
@@ -346,9 +346,6 @@ const ST6=[
  {q:'Клік по написі «Гурток:» переведе фокус на список.',a:true,why:'[[for="club"]] у [[<label>]] збігається з [[id="club"]] у [[<select>]].'},
  {q:'Якщо обрати «Шахи», на сервер піде [[club=Шахи]].',a:true,why:'коли в [[<option>]] немає [[value]], надсилається текст пункту.'}];
 
-/* 7. баг-репорт */
-const LN7=['<form action="/join.php" metod="POST">','  <fieldset>','    <legend>Запис на гурток</legend>','    <label for="u_name">Прізвище та ім’я:</label>','    <input type="text" id="u_name" name="fullname" required>','    <label for="u_mail">Пошта батьків:</label>','    <input type="mail" id="u_mail" name="email">','    <label for="u_phone">Телефон:</label>','    <input type="tel" id="phone" name="phone">','    <p>Форма занять:</p>','    <input type="radio" id="f_off" name="format" value="offline" checked>','    <label for="f_off">Очна</label>','    <input type="radio" id="f_on" name="formats" value="online">','    <label for="f_on">Онлайн</label>','    <label for="u_note">Побажання:</label>','    <textarea id="u_note" name="note" rows="3"></textarea>','    <input type="submit" id="send" val="Надіслати заявку">','    <input type="reset" id="send" value="Очистити">','  </fieldset>','</form>'];
-const BG7={0:'атрибут записано з помилкою: [[metod]] замість [[method]] — браузер його не впізнає й надішле дані методом GET.',6:'типу [[mail]] не існує — потрібно [[type="email"]], інакше браузер не перевірить адресу.',8:'[[id="phone"]] не збігається з [[for="u_phone"]] у підписі — клік по «Телефон» не активує поле.',12:'у перемикачів різні [[name]] ([[format]] і [[formats]]) — можна вибрати обидва варіанти; потрібен однаковий [[name="format"]].',16:'атрибут називається [[value]], а не [[val]] — напис на кнопці не з’явиться.',17:'[[id="send"]] повторюється (він уже є в кнопці надсилання) — [[id]] має бути унікальним.'};
 
 /* 8. пропуски */
 const CODE8=`<form action="/clubs/search" method="§1§">
@@ -462,22 +459,6 @@ const R11=[
  {ok:(d,raw)=>{const e=byLabel(d,/Коментар/);return e&&e.tagName==='TEXTAREA'&&!/</.test(e.textContent)&&/<\/textarea\s*>/i.test(raw)},bad:'Тег [[<textarea>]] не закрито — увесь код після нього перетворився на текст усередині поля; потрібен [[</textarea>]].'},
  {ok:d=>{const b=$$('button,input',d).find(x=>/Надіслати відгук/.test(x.textContent+(x.value||'')));return b&&b.type==='submit'},bad:'Кнопка «Надіслати відгук» має [[type="button"]] і нічого не відправляє — потрібно [[type="submit"]].'}];
 
-/* 12. фінальна форма */
-const REQ12=['[[<form>]]: [[action="/register.php"]], метод [[POST]].','Дві рамки [[<fieldset>]] із заголовками [[<legend>]]: «Дані учня» та «Вибір гуртка».','Прізвище та ім’я: [[type="text"]], [[name="fullname"]], обов’язкове, із сірим зразком-підказкою.','Пошта батьків: [[type="email"]], [[name="email"]], обов’язкове.','Клас: [[type="number"]], [[name="grade"]], від 5 до 11.','Гурток: список [[<select>]] з [[name="club"]], щонайменше 2 групи [[<optgroup>]] і 4 пункти з [[value]].','Форма занять: 2 перемикачі з [[name="format"]] (очна / онлайн), один вибрано заздалегідь.','Згода з правилами: обов’язковий прапорець, [[name="agree"]].','Кнопки надсилання ([[submit]]) і очищення ([[reset]]).','Кожен елемент форми має унікальний [[id]], кожне поле — свій [[<label for>]].'];
-const fld=(title,sel,more,moreMsg)=>({ok:d=>{const e=$(sel,d);return!!e&&!!e.id&&labelsOf(d,e).length>0&&(!more||more(e))},bad:d=>{const e=$(sel,d);if(!e)return`${title}: не знайдено елемент із потрібними [[type]] і [[name]].`;if(!e.id)return`${title}: немає атрибута [[id]].`;if(!labelsOf(d,e).length)return`${title}: немає підпису [[<label>]], у якого [[for]] збігається з [[id="${e.id}"]].`;return`${title}: ${moreMsg}`}});
-const R12=[
- {ok:d=>{const f=$('form',d);return f&&f.getAttribute('action')==='/register.php'&&(f.getAttribute('method')||'').toUpperCase()==='POST'},bad:'Тег [[<form>]]: потрібні [[action="/register.php"]] і [[method="POST"]].'},
- {ok:d=>{const fs=$$('fieldset',d);const lg=fs.map(f=>{const l=[...f.children].find(c=>c.tagName==='LEGEND');return l?l.textContent.trim():''});return fs.length>=2&&lg.some(t=>/Дані учня/i.test(t))&&lg.some(t=>/Вибір гуртка/i.test(t))},bad:'Потрібні дві рамки [[<fieldset>]], у кожної свій [[<legend>]]: «Дані учня» та «Вибір гуртка».'},
- fld('Прізвище та ім’я','input[type=text][name=fullname]',e=>e.hasAttribute('required')&&!!(e.getAttribute('placeholder')||'').trim(),'потрібні атрибути [[required]] і [[placeholder]].'),
- fld('Пошта батьків','input[type=email][name=email]',e=>e.hasAttribute('required'),'поле має бути обов’язковим ([[required]]).'),
- fld('Клас','input[type=number][name=grade]',e=>e.getAttribute('min')==='5'&&e.getAttribute('max')==='11','межі задають [[min="5"]] і [[max="11"]].'),
- fld('Гурток','select[name=club]',e=>$$('optgroup',e).length>=2&&$$('option',e).filter(o=>(o.getAttribute('value')||'').trim()).length>=4,'потрібно щонайменше 2 групи [[<optgroup>]] і 4 пункти [[<option>]] із непорожнім [[value]].'),
- {ok:d=>{const r=$$('input[type=radio][name=format]',d);return r.length>=2&&r.every(x=>x.id&&labelsOf(d,x).length&&(x.getAttribute('value')||'').trim())&&r.filter(x=>x.hasAttribute('checked')).length===1},bad:'Форма занять: потрібні 2 перемикачі з [[name="format"]], у кожного свої [[id]], [[value]] і [[<label>]], рівно один — [[checked]].'},
- fld('Згода','input[type=checkbox][name=agree]',e=>e.hasAttribute('required'),'прапорець має бути обов’язковим ([[required]]).'),
- {ok:d=>{const b=$$('button,input',d);return b.some(x=>x.type==='submit')&&b.some(x=>x.type==='reset')},bad:'Потрібні дві кнопки: надсилання ([[submit]]) і очищення ([[reset]]).'},
- {ok:d=>{const e=$$('input,select,textarea,button',d);return e.length>0&&uniqueIds(d)&&e.every(x=>x.id)},bad:'Кожен елемент форми ([[input]], [[select]], [[textarea]], [[button]]) повинен мати власний [[id]], і жоден [[id]] не може повторюватися.'},
- {ok:(d,raw)=>!!raw.trim()&&!closed(raw).length&&!$$('[val]',d).length,bad:(d,raw)=>{const c=closed(raw);return(c.length?`Не закрито парні теги: ${c.map(t=>`[[</${t}>]]`).join(', ')}. `:'')+($$('[val]',d).length?'Атрибут називається [[value]], а не [[val]].':'')||'Форма порожня.'}}];
-
 /* блоки макета сайту, що з’являються після перевірки тікетів */
 const MK=[
  '<h3 style="margin:0 0 2px;font-size:17px">Онлайн-запис на гуртки 2026/2027</h3><p style="margin:0;color:#5b6478;font-size:12.5px">Заповніть форму — керівник гуртка зв’яжеться з вами протягом тижня.</p>',
@@ -486,13 +467,11 @@ const MK=[
  '<div class="two"><div><label>Клас</label><input type="number" min="5" max="11" value="10"></div><div><label>Час занять</label><input type="time" value="15:30"></div></div>',
  '<div class="two"><div><label>Заклад</label><input value="Ліцей «Обрій»" readonly style="background:#eef1f6"></div><div><span class="lb">Форма занять</span><div class="inl"><span><input type="radio" name="mkf" checked> <label>Очна</label></span><span><input type="radio" name="mkf"> <label>Онлайн</label></span></div></div></div>',
  '<label>Гурток</label><select><option>Веб-дизайн</option><optgroup label="ІТ"><option>Робототехніка</option><option>Веб-дизайн</option></optgroup><optgroup label="Спорт"><option>Волейбол</option><option>Шахи</option></optgroup></select>',
- '<label>Побажання</label><textarea rows="2" placeholder="Що хочеш навчитися робити?"></textarea>',
  '<label>🔎 Пошук гуртка</label><input type="search" placeholder="шахи, хор, волейбол…">',
  '<div class="two"><div><label>Логін для кабінету</label><input placeholder="olena_10"></div><div><label>Номер учнівського</label><input placeholder="AB1234"></div></div>',
  '<span class="lb">Додаткові секції</span><div class="inl"><span><input type="checkbox" checked> <label>Шахи</label></span><span><input type="checkbox" checked> <label>Хор</label></span><span><input type="checkbox"> <label>Волейбол</label></span></div>',
- '<span class="lb">Відгук батьків</span><div class="inl"><span>Оцінка: <b style="color:#f59e0b">★★★★★</b></span><span><input type="radio" name="mka" checked> <label>Порадимо друзям</label></span></div>',
- '<div class="inl" style="margin-bottom:8px"><span><input type="checkbox" checked> <label>Погоджуюсь з правилами гуртка</label></span></div><div class="btns"><span>Надіслати заявку</span><span>Очистити</span></div><p style="margin:10px 0 0;color:#0b8a5f;font-weight:700">✅ Форму прийнято замовником</p>'];
-const MKORD=[0,7,1,2,3,4,5,9,8,6,10,11];
+ '<label>Побажання</label><textarea rows="2" placeholder="Що хочеш навчитися робити?"></textarea><div style="height:10px"></div><div class="inl" style="margin-bottom:8px"><span><input type="checkbox" checked> <label>Погоджуюсь з правилами гуртка</label></span></div><div class="btns"><span>Надіслати заявку</span><span>Очистити</span></div><p style="margin:10px 0 0;color:#0b8a5f;font-weight:700">✅ Форму прийнято замовником</p>'];
+const MKORD=[0,6,1,2,3,4,5,8,7,9];
 
 /* ================= завдання (тікети) ================= */
 let PICK=null,JUST=0,RO=null;
@@ -553,16 +532,7 @@ const T=[
  bind(st){$$('[data-v]').forEach(b=>b.onclick=()=>{st[+b.dataset.i]=b.dataset.v==='true';save();rer()})},
  grade(st){let ok=0;const err=[];ST6.forEach((x,i)=>{if(st[i]===x.a)ok++;else err.push(`Твердження ${i+1} («${plain(x.q)}»): ${st[i]===undefined?'відповіді немає':'оцінено неправильно'} — ${x.why}`)});return{ok,tot:ST6.length,err}}},
 
-{id:'ВК-203',sp:1,who:'qa',kind:'Знайди помилки',title:'Баг-репорт: форма «працює дивно»',
- msg:'<p>Я протестувала форму запису — батьки скаржаться, що вона «працює дивно». У коді рівно <b>6 помилок</b>. Знайдіть рядки з ними й натисніть на них (повторне натискання знімає позначку).</p><p>Увага: хибні позначки зменшують результат.</p>',
- init:()=>[],
- view(st){return`<div class="blines">${LN7.map((l,i)=>`<button type="button" class="cl hlc ${st.includes(i)?'sel':''}" data-l="${i}"><span class="n">${i+1}</span><span>${hl(l)}</span></button>`).join('')}</div>`},
- bind(st){$$('.cl[data-l]').forEach(r=>r.onclick=()=>{const i=+r.dataset.l,k=st.indexOf(i);if(k>=0)st.splice(k,1);else st.push(i);save();rer()})},
- grade(st){const B=Object.keys(BG7).map(Number);const found=st.filter(i=>B.includes(i)),extra=st.filter(i=>!B.includes(i));
-  const err=[...B.filter(i=>!st.includes(i)).map(i=>`Не знайдено помилку в рядку ${i+1}: ${BG7[i]}`),...extra.map(i=>`Рядок ${i+1} позначено помилково — там усе записано правильно.`)];
-  return{ok:Math.max(0,found.length-extra.length),tot:B.length,err,unit:'помилок у звіті'}}},
-
-{id:'ВК-204',sp:1,who:'lead',kind:'Заповни пропуски',title:'Пошук гуртків на сайті ліцею',
+{id:'ВК-203',sp:1,who:'lead',kind:'Заповни пропуски',title:'Пошук гуртків на сайті ліцею',
  msg:'<p>Потрібна маленька форма пошуку. Вимоги:</p><ul><li>сторінка результатів має адресу на кшталт <code>/clubs/search?q=шахи&amp;age=14</code> — нею можна поділитися;</li><li>клік по написі «Пошук гуртка» ставить курсор у поле;</li><li>поле саме пошукове (хрестик очищення, клавіша «Пошук» на телефоні);</li><li>в адресі запит називається <code>q</code>;</li><li>вік — не менше 10;</li><li>кнопка відправляє форму.</li></ul><p>Перетягніть картки в пропуски або натисніть картку — вона стане в перший вільний пропуск. Деякі картки зайві.</p>',
  init:()=>({}),
  view(st){const used=Object.values(st);const pool=CH8.filter(c=>!used.includes(c));const chip=c=>`<button type="button" class="chip" data-chip="${c}">${c}</button>`;
@@ -595,14 +565,8 @@ const T=[
  init:()=>FIX11,
  view(st){return`<div class="two">${editor('e11',st,'feedback.html')}${preview('e11')}</div>`},
  bind(st,i){bindEd('e11',()=>S.t[i].a,v=>{S.t[i].a=v})},
- grade(st){return ruleGrade(R11,st)}},
+ grade(st){return ruleGrade(R11,st)}}];
 
-{id:'ВК-304',sp:2,who:'client',kind:'Напиши код',title:'Фінальний реліз: форма запису на гуртки',
- msg:'<p>Шановна командо! Настав час головного — повної форми запису. Нижче технічне завдання. Чекаю на результат!</p>',
- init:()=>'<!-- Напишіть форму тут. Вимоги — у технічному завданні вище. -->\n',
- view(st){return`<ol class="req">${REQ12.map(x=>`<li>${fmt(x)}</li>`).join('')}</ol><div class="two">${editor('e12',st,'register.html')}${preview('e12')}</div>`},
- bind(st,i){bindEd('e12',()=>S.t[i].a,v=>{S.t[i].a=v})},
- grade(st){return ruleGrade(R12,st)}}];
 
 /* ================= стан ================= */
 let S=null;
@@ -679,8 +643,8 @@ function draw(){if(RO){RO.disconnect();RO=null}topbar();({start:drawStart,board:
 function drawStart(){const has=S.me.sn&&S.t.some(t=>t.att>0||t.skip);
  $('#stage').innerHTML=`<div class="hero"><section class="card"><div class="kick">&lt;form action="/vebkuznia/internship"&gt;</div><h1>Стажування у веб-студії «ВебКузня»</h1>
  <p>Ліцей «Обрій» замовив у нашої студії частину нового шкільного сайту — <b>онлайн-форму запису учнів на гуртки й секції</b>. Ви приєднуєтеся до команди стажером. Виконуйте тікети (задачі) на дошці, отримуйте підвищення — і разом ми зберемо форму, якою користуватимуться всі учні ліцею.</p>
- <div class="ladder">${LV.map((l,k)=>`<div class="step" style="border-color:${l.c}55"><b style="color:${l.c}">${lvBadge(k)}</b><span>Спринт ${k+1} · 4 тікети</span><span class="cap" style="color:${l.c}">до ${l.cap}</span><span>максимальна оцінка</span></div>`).join('')}</div>
- <ul class="rules"><li>Спринт (sprint — етап роботи) складається з 4 тікетів різних типів. Наступний спринт відкривається після підвищення.</li><li><b>Підвищення</b> дають, коли всі тікети спринту перевірено й набрано достатньо балів: до Junior — щонайменше ${fmtP(4*PROMO[0])} з 4, до Middle — щонайменше ${fmtP(4*PROMO[1])} з 4.</li><li>Перевірити можна лише тікет із відповіддю: порожня перевірка не рахується.</li><li>На кожен тікет — <b>${MAXATT} спроби</b>. Після «Перевірити» видно лише кількість помилок; зараховується найкраща спроба.</li><li>Тікет повністю правильно — 1 бал, наполовину — 0,5, менше половини — 0,25.</li><li>Тікет можна почати заново або пропустити й повернутися до нього пізніше.</li><li>Кнопка <b>«🏁 Завершити роботу»</b> вгорі екрана дає змогу здати роботу в будь-який момент, навіть не виконавши всіх тікетів. Невиконані тікети зараховуються як 0 балів.</li></ul></section>
+ <div class="ladder">${LV.map((l,k)=>`<div class="step" style="border-color:${l.c}55"><b style="color:${l.c}">${lvBadge(k)}</b><span>Спринт ${k+1} · ${T.filter(t=>t.sp===k).length} тікети</span><span class="cap" style="color:${l.c}">до ${l.cap}</span><span>максимальна оцінка</span></div>`).join('')}</div>
+ <ul class="rules"><li>Спринт (sprint — етап роботи) складається з кількох тікетів різних типів (4 у першому, по 3 в наступних). Наступний спринт відкривається після підвищення.</li><li><b>Підвищення</b> дають, коли всі тікети спринту перевірено й набрано достатньо балів: до Junior — щонайменше ${fmtP(T.filter(t=>t.sp===0).length*PROMO[0])} з ${T.filter(t=>t.sp===0).length}, до Middle — щонайменше ${fmtP(T.filter(t=>t.sp===1).length*PROMO[1])} з ${T.filter(t=>t.sp===1).length}.</li><li>Перевірити можна лише тікет із відповіддю: порожня перевірка не рахується.</li><li>На кожен тікет — <b>${MAXATT} спроби</b>. Після «Перевірити» видно лише кількість помилок; зараховується найкраща спроба.</li><li>Тікет повністю правильно — 1 бал, наполовину — 0,5, менше половини — 0,25.</li><li>Тікет можна почати заново або пропустити й повернутися до нього пізніше.</li><li>Кнопка <b>«🏁 Завершити роботу»</b> вгорі екрана дає змогу здати роботу в будь-який момент, навіть не виконавши всіх тікетів. Невиконані тікети зараховуються як 0 балів.</li></ul></section>
  <section class="card"><h3 style="margin-top:0">Ваша команда</h3><div class="team">${Object.keys(WHO).map(w=>`<div class="person">${avatar(w)}<div><b>${WHO[w].n}</b><small>${WHO[w].r}</small></div></div>`).join('')}</div>
  <h3>Оформлення в студію</h3><div class="form-in"><label>Прізвище<input id="sn" autocomplete="family-name" value="${esc(S.me.sn)}"></label><label>Ім’я<input id="fn" autocomplete="given-name" value="${esc(S.me.fn)}"></label><label>Клас<input id="cl" placeholder="11-А" value="${esc(S.me.cl)}"></label></div>
  <div class="err" id="e"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn main" id="go">Почати стажування →</button>${has?`<button class="btn" id="cont">Продовжити роботу (${esc(S.me.sn)} ${esc(S.me.fn)})</button>`:''}</div></section></div>`;
@@ -735,16 +699,16 @@ function check(i){const t=T[i],st=S.t[i];if(closedT(i))return;
  setTimeout(()=>afterCheck(i),350)}
 function afterCheck(i){const k=T[i].sp;
  if(k===S.lvl&&k<2){const s=sprintInfo(k);if(s.checked<s.max)return;
-  if(s.P>=s.need){S.lvl++;save();topbar();
+  if(s.P>=s.need-1e-9){S.lvl++;save();topbar();
    modal(`<div class="big">${k===0?'⚡':'🚀'}</div><h3>Підвищення: ${LV[S.lvl].full}!</h3><p>${WHO.lead.n}: «Спринт ${k+1} закрито — ${fmtP(s.P)} з ${s.max} балів. Вітаю з новим статусом!»</p><p>Відкрито <b>спринт ${S.lvl+1}</b>. Максимальна оцінка тепер — <b>${LV[S.lvl].cap}</b>. Тікети спринту ${k+1}, де ще є спроби, можна покращувати й далі.</p>`,[{t:'Залишитися тут'},{t:'До дошки задач',c:'main',f:()=>go('board')}])}
   else if(s.canImprove)modal(`<h3>Поки без підвищення</h3><p>Усі тікети спринту ${k+1} перевірено: ${fmtP(s.P)} з ${s.max} балів. Для підвищення до ${LV[k+1].n} потрібно щонайменше <b>${fmtP(s.need)}</b>.</p><p>У деяких тікетах ще є спроби — виправте помилки й перевірте знову.</p>`,[{t:'Зрозуміло',c:'main'}]);
   else endModal();return}
  if(stuck()){endModal();return}
- if(S.lvl===2&&T.every((x,j)=>S.t[j].att>0)&&k===2&&sprintInfo(2).checked===4&&!S.t[i].doneMsg){S.t[i].doneMsg=1;save();modal('<div class="big">🏁</div><h3>Усі тікети перевірено!</h3><p>Можна ще покращити тікети, де лишилися спроби, або здати проєкт замовнику.</p>',[{t:'Залишитися'},{t:'Завершити роботу',c:'main',f:finish}])}}
+ if(S.lvl===2&&T.every((x,j)=>S.t[j].att>0)&&k===2&&sprintInfo(2).checked===sprintInfo(2).max&&!S.t[i].doneMsg){S.t[i].doneMsg=1;save();modal('<div class="big">🏁</div><h3>Усі тікети перевірено!</h3><p>Можна ще покращити тікети, де лишилися спроби, або здати проєкт замовнику.</p>',[{t:'Залишитися'},{t:'Завершити роботу',c:'main',f:finish}])}}
 
 /* робота завершена: спроби вичерпано й підвищення неможливе (або в статусі Middle закрито всі тікети) */
 function stuck(){if(S.final)return null;const k=S.lvl;
- if(k<2){const s=sprintInfo(k);return s.checked===s.max&&!s.canImprove&&s.P<s.need?{type:'fail',k,s}:null}
+ if(k<2){const s=sprintInfo(k);return s.checked===s.max&&!s.canImprove&&s.P<s.need-1e-9?{type:'fail',k,s}:null}
  return T.every((t,i)=>closedT(i))?{type:'done',k}:null}
 function endModal(){const x=stuck();if(!x||$('.ov'))return;const tt=totals();
  const why=x.type==='fail'?`<p>Спроби в усіх тікетах спринту ${x.k+1} вичерпано: <b>${fmtP(x.s.P)} з ${x.s.max}</b> балів, а для підвищення до ${LV[x.k+1].n} потрібно щонайменше <b>${fmtP(x.s.need)}</b>. Підвищити статус у цій спробі вже неможливо.</p>`:`<p>Усі тікети закрито — покращувати більше нічого.</p>`;
