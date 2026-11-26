@@ -36,6 +36,7 @@ h1,h2,h3,h4{line-height:1.2;text-wrap:balance}
 .pbar{flex:1;height:8px;border-radius:6px;background:var(--pan2);border:1px solid var(--bd);overflow:hidden}
 .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
 .me{display:flex;align-items:center;gap:8px;font-size:14px}
+.btn.fin{min-height:38px;padding:5px 12px;font-size:14px;border-color:var(--ok);color:var(--ok);background:transparent}.btn.fin:hover{background:var(--okb)}
 .av{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--pan2);border:1px solid var(--bd);font-weight:700;font-size:13px;flex:none}
 .lv{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:2px 10px;font:700 12.5px/1.6 Onest,sans-serif;border:1px solid currentColor;white-space:nowrap}
 /* ---------- кнопки ---------- */
@@ -222,7 +223,8 @@ select.asel{font:600 13px "JetBrains Mono",monospace;padding:5px 8px;min-height:
 .ov{position:fixed;inset:0;z-index:100;background:rgba(5,8,14,.6);display:grid;place-items:center;padding:16px}
 .modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--pan);border:1px solid var(--bd2);border-radius:18px;padding:22px;box-shadow:var(--sh);animation:pop2 .25s ease-out}
 .modal h3{margin:0 0 8px;font-size:22px}.modal .big{font-size:44px;line-height:1}
-.modal .mb{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:16px}
+.modal .mb{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:16px;position:sticky;bottom:-22px;background:var(--pan);padding:12px 0 22px;margin-bottom:-22px;border-top:1px solid var(--bd)}
+@media(max-width:560px){.modal{padding:18px}.modal .mb{bottom:-18px;margin-bottom:-18px;padding-bottom:18px}.modal .mb .btn{flex:1 1 100%}.modal .big{font-size:34px}}
 .modal ul{padding-left:20px}
 @keyframes pop2{from{opacity:0;transform:scale(.96)}}
 /* ---------- підсумок ---------- */
@@ -231,11 +233,11 @@ select.asel{font:600 13px "JetBrains Mono",monospace;padding:5px 8px;min-height:
 .tbl{width:100%;border-collapse:collapse;font-size:14.5px}
 .tbl th,.tbl td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
 .tbl th{color:var(--mu);font-weight:600;font-size:13px}
-.tbl td.n{white-space:nowrap;text-align:right}
+.tbl td.n,.tbl th.n{white-space:nowrap;text-align:right}
 .errs{padding-left:20px;margin:8px 0}.errs li{margin:5px 0;font-size:14.5px}
 .note{color:var(--mu);font-size:14.5px}
 @media(max-width:980px){.bgrid,.hero,.sgrid{grid-template-columns:minmax(0,1fr)}.mock{position:static}.buckets{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:700px){.qs,.tks,.ladder,.form-in{grid-template-columns:minmax(0,1fr)}.req{columns:1}.actions .push{margin-left:0;width:100%}.actions .push .btn{flex:1}.thead .att{margin-left:0;width:100%}.prog{order:3;flex-basis:100%}.logo span small{display:none}.me .nm{display:none}.top .wrap{padding-block:8px;gap:6px 12px}.me{margin-left:auto}}
+@media(max-width:700px){.qs,.tks,.ladder,.form-in{grid-template-columns:minmax(0,1fr)}.req{columns:1}.actions .push{margin-left:0;width:100%}.actions .push .btn{flex:1}.thead .att{margin-left:0;width:100%}.prog{order:3;flex-basis:100%}.logo span small{display:none}.me .nm{display:none}.top .wrap{padding-block:8px;gap:6px 12px}.me{margin-left:auto}.btn.fin span{display:none}.btn.fin{padding:5px 10px}}
 @media(max-width:440px){.buckets{grid-template-columns:minmax(0,1fr)}.bucket{min-height:90px}.node{font-size:13px;padding:7px 10px}.node.r{font-size:12.5px;padding-left:14px}.wires{gap:34px}.me .nm{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -252,7 +254,6 @@ const MAXATT=3;          // спроб на кожен тікет
 const PROMO=[0.5,0.75];  // частка балів спринту для підвищення: до Junior — 2 з 4, до Middle — 3 з 4
 const SAVE="vebkuznia-forms-v1";
 const LV=[{n:'Стажер',full:'Стажер',cap:8,c:'#94a3b8'},{n:'Junior',full:'Junior (молодший розробник)',cap:10,c:'#22d3ee'},{n:'Middle',full:'Middle (розробник середнього рівня)',cap:12,c:'#b39dff'}];
-const TH=[[95,12],[88,11],[81,10],[74,9],[67,8],[60,7],[50,6],[40,5],[30,4],[20,3],[10,2],[0,1]];
 const WHO={pm:{n:'Олена Коваль',r:'менеджерка проєкту (Project Manager)',e:'👩‍💼',c:'#f59e0b'},lead:{n:'Андрій Мельник',r:'тімлід (Team Lead)',e:'👨‍💻',c:'#7c5cff'},qa:{n:'Марта Бондар',r:'тестувальниця (QA-інженерка)',e:'🕵️‍♀️',c:'#22d3ee'},client:{n:'Ганна Петрівна',r:'директорка ліцею «Обрій», замовниця',e:'🏫',c:'#34d399'}};
 
 /* ================= помічники ================= */
@@ -612,7 +613,13 @@ function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
 const closedT=i=>{const t=S.t[i];return t.att>=MAXATT||(t.best&&t.best.p===1)};
 const open=i=>T[i].sp<=S.lvl;
 function sprintInfo(k){const ids=T.map((t,i)=>i).filter(i=>T[i].sp===k);return{ids,checked:ids.filter(i=>S.t[i].att>0).length,P:ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),need:ids.length*(PROMO[k]||1),max:ids.length,canImprove:ids.some(i=>!closedT(i))}}
-function totals(){const cap=LV[S.lvl].cap;const ids=T.map((t,i)=>i).filter(open);const P=ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),M=ids.length,pcx=M?P/M*100:0;const g12=TH.find(t=>pcx>=t[0]-1e-9)[1];return{P,M,pc:Math.round(pcx),g12,g:Math.max(1,Math.round(g12*cap/12)),cap,ids}}
+/* оцінка «сходинками»: спринт 1 дає до 8, спринт 2 додає до 2 (8→10), спринт 3 — ще до 2 (10→12); підвищення ніколи не знижує оцінку */
+function totals(){const ids=T.map((t,i)=>i).filter(open),P=ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),M=ids.length;
+ const sp=[0,1,2].map(k=>{const w=LV[k].cap-(k?LV[k-1].cap:0),js=T.map((t,i)=>i).filter(i=>T[i].sp===k),p=k<=S.lvl?js.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0):0;return{k,w,p,max:js.length,add:k<=S.lvl?w*p/js.length:0,open:k<=S.lvl}});
+ const raw=sp.reduce((a,x)=>a+x.add,0);
+ return{P,M,pc:M?Math.round(P/M*100):0,g:Math.max(1,Math.round(raw+1e-9)),raw,cap:LV[S.lvl].cap,ids,sp,basis:''}}
+const spTxt=(tt,sep='; ')=>tt.sp.filter(x=>x.open).map(x=>`спринт ${x.k+1} (${LV[x.k].n}) — ${fmtP(x.p)} з ${x.max}`).join(sep);
+const calcTxt=tt=>tt.sp.filter(x=>x.open).map(x=>`спринт ${x.k+1}: ${fmtP(x.p)} з ${x.max} → ${x.k?'+':''}${fmtP(Math.round(x.add*100)/100)} з ${x.w}`).join('; ')+(Math.abs(tt.raw-tt.g)<1e-9?` = ${tt.g}`:` = ${fmtP(Math.round(tt.raw*100)/100)} ≈ ${tt.g}`);
 function errList(){const out=[];totals().ids.forEach(i=>{const t=S.t[i],h=`${T[i].id} «${T[i].title}»`;if(!t.att)out.push(`${h}: тікет не виконано (пропущено).`);else(t.best.err||[]).forEach(e=>out.push(`${h}: ${e}`))});return out}
 
 /* ================= перетягування ================= */
@@ -665,7 +672,7 @@ const lvBadge=k=>`<span class="lv" style="color:${LV[k].c}">${k===0?'🎓':k===1
 const avatar=w=>`<span class="av" style="background:${WHO[w].c}22;border-color:${WHO[w].c}">${WHO[w].e}</span>`;
 const initials=()=>((S.me.sn[0]||'')+(S.me.fn[0]||'')).toUpperCase();
 function topbar(){const n=S.t.filter(t=>t.att>0).length;
- $('#top').innerHTML=`<div class="top"><div class="wrap"><div class="logo"><b>⚒</b><span>ВебКузня<small>веб-студія · замовлення ліцею «Обрій»</small></span></div>${S.scr==='start'?'':`<div class="prog">Прогрес<div class="pbar"><i style="width:${n/T.length*100}%"></i></div>${n} з ${T.length}</div><div class="me"><span class="av">${esc(initials())}</span><span class="nm">${esc(S.me.sn)} ${esc(S.me.fn)}</span>${lvBadge(S.lvl)}</div>`}</div></div>`}
+ $('#top').innerHTML=`<div class="top"><div class="wrap"><div class="logo"><b>⚒</b><span>ВебКузня<small>веб-студія · замовлення ліцею «Обрій»</small></span></div>${S.scr==='start'?'':`<div class="prog">Прогрес<div class="pbar"><i style="width:${n/T.length*100}%"></i></div>${n} з ${T.length}</div><div class="me"><span class="av">${esc(initials())}</span><span class="nm">${esc(S.me.sn)} ${esc(S.me.fn)}</span>${lvBadge(S.lvl)}</div>${S.scr==='sum'?'':'<button class="btn fin" id="finTop" title="Здати роботу вчителю в будь-який момент">🏁 <span>Завершити роботу</span></button>'}`}</div></div>`;const f=$('#finTop');if(f)f.onclick=finish}
 function go(scr,cur){S.scr=scr;if(cur!==undefined)S.cur=cur;PICK=null;save();draw();scrollTo(0,0)}
 function draw(){if(RO){RO.disconnect();RO=null}topbar();({start:drawStart,board:drawBoard,ticket:drawTicket,sum:drawSum})[S.scr]();if((S.scr==='board'||S.scr==='ticket')&&stuck())setTimeout(endModal,300)}
 
@@ -673,7 +680,7 @@ function drawStart(){const has=S.me.sn&&S.t.some(t=>t.att>0||t.skip);
  $('#stage').innerHTML=`<div class="hero"><section class="card"><div class="kick">&lt;form action="/vebkuznia/internship"&gt;</div><h1>Стажування у веб-студії «ВебКузня»</h1>
  <p>Ліцей «Обрій» замовив у нашої студії частину нового шкільного сайту — <b>онлайн-форму запису учнів на гуртки й секції</b>. Ви приєднуєтеся до команди стажером. Виконуйте тікети (задачі) на дошці, отримуйте підвищення — і разом ми зберемо форму, якою користуватимуться всі учні ліцею.</p>
  <div class="ladder">${LV.map((l,k)=>`<div class="step" style="border-color:${l.c}55"><b style="color:${l.c}">${lvBadge(k)}</b><span>Спринт ${k+1} · 4 тікети</span><span class="cap" style="color:${l.c}">до ${l.cap}</span><span>максимальна оцінка</span></div>`).join('')}</div>
- <ul class="rules"><li>Спринт (sprint — етап роботи) складається з 4 тікетів різних типів. Наступний спринт відкривається після підвищення.</li><li><b>Підвищення</b> дають, коли всі тікети спринту перевірено й набрано достатньо балів: до Junior — щонайменше ${fmtP(4*PROMO[0])} з 4, до Middle — щонайменше ${fmtP(4*PROMO[1])} з 4.</li><li>Перевірити можна лише тікет із відповіддю: порожня перевірка не рахується.</li><li>На кожен тікет — <b>${MAXATT} спроби</b>. Після «Перевірити» видно лише кількість помилок; зараховується найкраща спроба.</li><li>Тікет повністю правильно — 1 бал, наполовину — 0,5, менше половини — 0,25.</li><li>Тікет можна почати заново або пропустити й повернутися до нього пізніше.</li><li>Проєкт можна здати замовникові в будь-який момент — оцінка залежатиме від статусу й балів.</li></ul></section>
+ <ul class="rules"><li>Спринт (sprint — етап роботи) складається з 4 тікетів різних типів. Наступний спринт відкривається після підвищення.</li><li><b>Підвищення</b> дають, коли всі тікети спринту перевірено й набрано достатньо балів: до Junior — щонайменше ${fmtP(4*PROMO[0])} з 4, до Middle — щонайменше ${fmtP(4*PROMO[1])} з 4.</li><li>Перевірити можна лише тікет із відповіддю: порожня перевірка не рахується.</li><li>На кожен тікет — <b>${MAXATT} спроби</b>. Після «Перевірити» видно лише кількість помилок; зараховується найкраща спроба.</li><li>Тікет повністю правильно — 1 бал, наполовину — 0,5, менше половини — 0,25.</li><li>Тікет можна почати заново або пропустити й повернутися до нього пізніше.</li><li>Кнопка <b>«🏁 Завершити роботу»</b> вгорі екрана дає змогу здати роботу в будь-який момент, навіть не виконавши всіх тікетів. Невиконані тікети зараховуються як 0 балів.</li></ul></section>
  <section class="card"><h3 style="margin-top:0">Ваша команда</h3><div class="team">${Object.keys(WHO).map(w=>`<div class="person">${avatar(w)}<div><b>${WHO[w].n}</b><small>${WHO[w].r}</small></div></div>`).join('')}</div>
  <h3>Оформлення в студію</h3><div class="form-in"><label>Прізвище<input id="sn" autocomplete="family-name" value="${esc(S.me.sn)}"></label><label>Ім’я<input id="fn" autocomplete="given-name" value="${esc(S.me.fn)}"></label><label>Клас<input id="cl" placeholder="11-А" value="${esc(S.me.cl)}"></label></div>
  <div class="err" id="e"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn main" id="go">Почати стажування →</button>${has?`<button class="btn" id="cont">Продовжити роботу (${esc(S.me.sn)} ${esc(S.me.fn)})</button>`:''}</div></section></div>`;
@@ -686,7 +693,7 @@ function tkState(i){const t=S.t[i];if(!open(i))return['Заблоковано','
 const dots=n=>`<span class="dots" title="Використано спроб: ${n} з ${MAXATT}">${Array.from({length:MAXATT},(x,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;
 function mockHtml(anim){const vis=i=>S.t[i].att>0;return`<div class="brw"><div class="bar"><i></i><i></i><i></i><span class="url">https://obrii.example/gurtky/zapys</span></div><div class="site" inert><header>🏫 Ліцей «Обрій» <small>Гуртки та секції</small></header><div class="pg">${MKORD.map(i=>vis(i)?`<div class="mk ${anim&&!S.seen.includes(i)?'new':''}">${MK[i]}</div>`:`<div class="mk ph">🔒 Блок з’явиться після перевірки тікета ${T[i].id}</div>`).join('')}</div></div></div>`}
 function drawBoard(){const k=S.lvl,si=sprintInfo(k);
- $('#stage').innerHTML=`<div class="bhead"><div><h2>Дошка задач</h2><p>Проєкт «Форма запису на гуртки» · статус: <b style="color:${LV[k].c}">${LV[k].full}</b> · максимальна оцінка зараз: <b>${LV[k].cap}</b></p></div><button class="btn main" id="fin">📦 Здати проєкт замовнику</button></div>
+ $('#stage').innerHTML=`<div class="bhead"><div><h2>Дошка задач</h2><p>Проєкт «Форма запису на гуртки» · статус: <b style="color:${LV[k].c}">${LV[k].full}</b> · максимальна оцінка зараз: <b>${LV[k].cap}</b></p></div><button class="btn main" id="fin">🏁 Завершити роботу</button></div>
  <div class="bgrid"><div>${[0,1,2].map(sp=>{const lock=sp>S.lvl,inf=sprintInfo(sp);return`<section class="sprint ${lock?'lock':''}"><div class="shead">${lvBadge(sp)}<h3>Спринт ${sp+1}</h3><span class="sp">${lock?'🔒 закрито':`перевірено ${inf.checked} з ${inf.max}`}</span></div>
   ${lock?`<div class="lockmsg">Відкриється після підвищення до статусу ${LV[sp].full}. Максимальна оцінка в цьому статусі — ${LV[sp].cap}.</div>`:`<div class="tks">${T.map((t,i)=>t.sp!==sp?'':(()=>{const[s,c]=tkState(i);return`<button type="button" class="tk" data-t="${i}" style="--st:${c}"><span class="row"><span class="id">${t.id}</span>${WHO[t.who].e}<span class="kind">${esc(t.kind)}</span></span><b>${esc(t.title)}</b><span class="stt">${s}${S.t[i].att?dots(S.t[i].att):''}</span></button>`})()).join('')}</div>`}
   ${!lock&&sp===S.lvl&&sp<2?`<div class="promo">До підвищення до <b>${LV[sp+1].n}</b>: перевірити всі тікети спринту й набрати ≥ ${fmtP(inf.need)} з ${inf.max} балів. Зараз: <b>${fmtP(inf.P)}</b> бала.<div class="pbar"><i style="width:${Math.min(100,inf.P/inf.need*100)}%"></i></div></div>`:''}</section>`}).join('')}</div>
@@ -733,7 +740,7 @@ function afterCheck(i){const k=T[i].sp;
   else if(s.canImprove)modal(`<h3>Поки без підвищення</h3><p>Усі тікети спринту ${k+1} перевірено: ${fmtP(s.P)} з ${s.max} балів. Для підвищення до ${LV[k+1].n} потрібно щонайменше <b>${fmtP(s.need)}</b>.</p><p>У деяких тікетах ще є спроби — виправте помилки й перевірте знову.</p>`,[{t:'Зрозуміло',c:'main'}]);
   else endModal();return}
  if(stuck()){endModal();return}
- if(S.lvl===2&&T.every((x,j)=>S.t[j].att>0)&&k===2&&sprintInfo(2).checked===4&&!S.t[i].doneMsg){S.t[i].doneMsg=1;save();modal('<div class="big">🏁</div><h3>Усі тікети перевірено!</h3><p>Можна ще покращити тікети, де лишилися спроби, або здати проєкт замовнику.</p>',[{t:'Залишитися'},{t:'Здати проєкт',c:'main',f:finish}])}}
+ if(S.lvl===2&&T.every((x,j)=>S.t[j].att>0)&&k===2&&sprintInfo(2).checked===4&&!S.t[i].doneMsg){S.t[i].doneMsg=1;save();modal('<div class="big">🏁</div><h3>Усі тікети перевірено!</h3><p>Можна ще покращити тікети, де лишилися спроби, або здати проєкт замовнику.</p>',[{t:'Залишитися'},{t:'Завершити роботу',c:'main',f:finish}])}}
 
 /* робота завершена: спроби вичерпано й підвищення неможливе (або в статусі Middle закрито всі тікети) */
 function stuck(){if(S.final)return null;const k=S.lvl;
@@ -741,30 +748,37 @@ function stuck(){if(S.final)return null;const k=S.lvl;
  return T.every((t,i)=>closedT(i))?{type:'done',k}:null}
 function endModal(){const x=stuck();if(!x||$('.ov'))return;const tt=totals();
  const why=x.type==='fail'?`<p>Спроби в усіх тікетах спринту ${x.k+1} вичерпано: <b>${fmtP(x.s.P)} з ${x.s.max}</b> балів, а для підвищення до ${LV[x.k+1].n} потрібно щонайменше <b>${fmtP(x.s.need)}</b>. Підвищити статус у цій спробі вже неможливо.</p>`:`<p>Усі тікети закрито — покращувати більше нічого.</p>`;
- modal(`<div class="big">🏁</div><h3>Роботу завершено</h3>${why}<p>Поточний результат: статус <b>${LV[x.k].n}</b>, бали <b>${fmtP(tt.P)} з ${tt.M}</b>, орієнтовна оцінка <b>${tt.g}</b> з 12 (максимум для статусу — ${tt.cap}).</p>
+ modal(`<div class="big">🏁</div><h3>Роботу завершено</h3>${why}<p>Поточний результат: статус <b>${LV[x.k].n}</b>, бали: <b>${spTxt(tt)}</b>, орієнтовна оцінка <b>${tt.g}</b> з 12 (максимум для статусу — ${tt.cap}).</p>
  <p>Оберіть, що робити далі:</p><ul><li><b>Завершити</b> — перейти до підсумку й надіслати результат учителю.</li><li><b>Почати з початку</b> — усі результати й спроби буде обнулено. Кількість таких перезапусків побачить учитель${S.restarts?` (зараз: ${S.restarts})`:''}.</li></ul>`,
  [{t:'⟲ Почати з початку',f:restart},{t:'Завершити й побачити підсумок',c:'main',f:()=>{S.final=true;go('sum')}}])}
 function regLog(){try{fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify({key:KEY,task:'Реєстрація',fields:{'ПІБ учня':S.me.sn+' '+S.me.fn,'Клас':S.me.cl,'Назва проєкту':TASK}})}).catch(()=>{})}catch(x){}}
 function restart(){const me=S.me,r=(S.restarts||0)+1;S=fresh();S.me=me;S.restarts=r;save();regLog();go('board')}
-function finish(){const ids=T.map((t,i)=>i).filter(open),miss=ids.filter(i=>!S.t[i].att),k=S.lvl,tt=totals();
- const confirmFinal=()=>modal(`<h3>Здати проєкт замовнику?</h3><p>Статус: <b>${LV[k].full}</b> · максимальна оцінка ${LV[k].cap}.</p><p>Після здачі змінити відповіді вже не вийде.</p>`,[{t:'Ще попрацюю'},{t:'Здати проєкт',c:'main',f:()=>{S.final=true;go('sum')}}]);
- if(miss.length)modal(`<h3>Є невиконані тікети</h3><p>Ці тікети ще не перевірено — їх буде зараховано як 0 балів:</p><ul>${miss.map(i=>`<li><b>${T[i].id}</b> ${esc(T[i].title)}</li>`).join('')}</ul><p>Поверніться до них, щоб отримати вищу оцінку.</p>`,[{t:'Однаково здати',f:confirmFinal},{t:'Повернутися до виконання',c:'main',f:()=>go('ticket',miss[0])}]);
- else confirmFinal()}
+function finish(){if(S.final)return go('sum');if($('.ov'))return;
+ const ids=T.map((t,i)=>i).filter(open),miss=ids.filter(i=>!S.t[i].att),k=S.lvl,tt=totals(),more=ids.filter(i=>S.t[i].att&&!closedT(i));
+ const fin=()=>{S.final=true;go('sum')};
+ modal(`<div class="big">🏁</div><h3>Завершити роботу?</h3>
+ <p>Поточний результат: статус <b>${LV[k].n}</b> (максимальна оцінка ${LV[k].cap}), бали: <b>${spTxt(tt)}</b>, орієнтовна оцінка <b>${tt.g}</b> з 12.</p>
+ ${miss.length?`<p><b>Не виконано тікетів: ${miss.length}</b> — їх буде зараховано як 0 балів:</p><ul>${miss.map(i=>`<li><b>${T[i].id}</b> ${esc(T[i].title)}</li>`).join('')}</ul>`:''}
+ ${more.length?`<p class="muted">Ще можна покращити результат у тікетах, де лишилися спроби: ${more.map(i=>T[i].id).join(', ')}.</p>`:''}
+ ${k<2?`<p class="muted">Наступний статус (${LV[k+1].n}) ще не отримано — тікети вищих спринтів не враховуються.</p>`:''}
+ <p>Після завершення змінити відповіді вже не вийде — відкриється підсумок, звідки результат надсилається вчителю.</p>`,
+ [{t:'Продовжити роботу'},...(miss.length?[{t:'До невиконаного тікета',f:()=>go('ticket',miss[0])}]:[]),{t:'Завершити роботу',c:'main',f:fin}])}
 
 function drawSum(){const tt=totals(),E=errList(),k=S.lvl;
  $('#stage').innerHTML=`<div class="sgrid"><section class="card"><div class="kick">ПРОЄКТ ЗДАНО ЗАМОВНИКУ</div><h2 style="margin:6px 0 4px">${esc(S.me.sn)} ${esc(S.me.fn)}</h2><p class="muted" style="margin:0 0 14px">Клас ${esc(S.me.cl)} · ${new Date().toLocaleDateString('uk-UA')}</p>
- <p style="margin:0">Статус: ${lvBadge(k)} <span class="muted">— максимальна оцінка ${tt.cap}</span></p>
+ <p style="margin:0">Статус: ${lvBadge(k)} <span class="muted">— максимальна оцінка ${LV[k].cap}</span></p>
  <div style="display:flex;align-items:flex-end;gap:12px;margin:12px 0 4px"><span class="grade">${tt.g}</span><span style="padding-bottom:12px"><b>з 12</b><br><span class="muted">орієнтовна оцінка</span></span></div>
- <p style="margin:0">Бали: <b>${fmtP(tt.P)} з ${tt.M}</b> (${tt.pc}%)</p><p style="margin:4px 0 0">Перезапусків проєкту: <b>${S.restarts||0}</b></p>
+ <table class="tbl" style="margin:6px 0 4px"><tr><th>Спринт</th><th class="n">Бали</th><th class="n">Внесок в оцінку</th></tr>${tt.sp.map(x=>`<tr${x.open?'':' class="muted"'}><td>${x.k+1} · ${LV[x.k].n}</td><td class="n">${x.open?`<b>${fmtP(x.p)}</b> з ${x.max}`:'не відкрито'}</td><td class="n">${x.k?'+':''}${fmtP(Math.round(x.add*100)/100)} з ${x.w}</td></tr>`).join('')}<tr><td><b>Оцінка</b></td><td></td><td class="n"><b>${Math.abs(tt.raw-tt.g)<1e-9?tt.g:fmtP(Math.round(tt.raw*100)/100)+' ≈ '+tt.g}</b></td></tr></table><p style="margin:4px 0 0">Перезапусків проєкту: <b>${S.restarts||0}</b></p>
  <p class="note">Остаточна оцінка вчителя враховуватиме також кількість допущених помилок і виконаних спроб.</p>
- <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn main" id="send">📨 Надіслати результат учителю</button><button class="btn" id="save">💾 Зберегти результат</button></div><p id="sm" class="muted"></p>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn main" id="send">📨 Надіслати результат учителю</button><button class="btn" id="save">💾 Зберегти результат</button><button class="btn" id="again">⟲ Почати з початку</button></div><p id="sm" class="muted"></p>
  <h3>Макет сторінки</h3>${mockHtml(false)}</section>
  <section class="card"><h3 style="margin-top:0">Тікети</h3><table class="tbl"><tr><th>Тікет</th><th>Завдання</th><th class="n">Бали</th><th class="n">Спроби</th></tr>${T.map((t,i)=>open(i)?`<tr><td class="mono" style="color:var(--act)">${t.id}</td><td>${esc(t.title)}<br><span class="muted" style="font-size:13px">${esc(t.kind)}</span></td><td class="n">${S.t[i].att?fmtP(S.t[i].best.p):'—'} / 1</td><td class="n">${S.t[i].att}</td></tr>`:'').join('')}</table>
  <h3>Помилки (${E.length})</h3>${E.length?`<ul class="errs">${E.map(e=>`<li>${fmt(e)}</li>`).join('')}</ul>`:'<p style="color:var(--ok);font-weight:700">Без помилок! 🎉</p>'}</section></div>`;
- $('#send').onclick=e=>send(e.target);$('#save').onclick=saveImg}
+ $('#send').onclick=e=>send(e.target);$('#save').onclick=saveImg;
+ $('#again').onclick=()=>modal(`<h3>Почати з початку?</h3><p>Усі результати, спроби й статус буде обнулено — робота почнеться зі статусу Стажер.</p><p>Це буде перезапуск №${(S.restarts||0)+1}. Кількість перезапусків побачить учитель.</p>${S.sent?'':'<p><b>Увага:</b> поточний результат ще не надіслано вчителю. Якщо він потрібен — спершу натисніть «Надіслати результат учителю».</p>'}`,[{t:'Скасувати'},{t:'Почати з початку',c:'main',f:restart}])}
 
 /* ================= підсумок: зображення й надсилання ================= */
-function sumLines(){const tt=totals(),E=errList();return{tt,E,L:[['Статус: '+LV[S.lvl].full+' (максимальна оцінка '+tt.cap+')',0],['Бали: '+fmtP(tt.P)+' з '+tt.M+' ('+tt.pc+'%)',0],['Перезапусків проєкту: '+(S.restarts||0),0],['Остаточна оцінка вчителя враховуватиме також кількість допущених помилок і виконаних спроб.',2],['',0],['Тікети:',1],...tt.ids.map(i=>['   '+T[i].id+' '+T[i].title+' — '+(S.t[i].att?fmtP(S.t[i].best.p):'0')+' з 1, спроб: '+S.t[i].att,0]),['',0],['Помилки ('+E.length+'):',1],...E.map(e=>['• '+plain(e),0])]}}
+function sumLines(){const tt=totals(),E=errList();return{tt,E,L:[['Статус: '+LV[S.lvl].full+' (максимальна оцінка '+LV[S.lvl].cap+')',0],['Бали за спринтами:',1],...tt.sp.map(x=>['   Спринт '+(x.k+1)+' · '+LV[x.k].n+': '+(x.open?fmtP(x.p)+' з '+x.max+' → внесок '+fmtP(Math.round(x.add*100)/100)+' з '+x.w:'не відкрито'),0]),['Розрахунок оцінки: '+calcTxt(tt),0],['Перезапусків проєкту: '+(S.restarts||0),0],['Остаточна оцінка вчителя враховуватиме також кількість допущених помилок і виконаних спроб.',2],['',0],['Тікети:',1],...tt.ids.map(i=>['   '+T[i].id+' '+T[i].title+' — '+(S.t[i].att?fmtP(S.t[i].best.p):'0')+' з 1, спроб: '+S.t[i].att,0]),['',0],['Помилки ('+E.length+'):',1],...E.map(e=>['• '+plain(e),0])]}}
 function wrapTxt(x,t,w){const o=[];let c='';t.split(' ').forEach(s=>{const n=c?c+' '+s:s;if(x.measureText(n).width>w&&c){o.push(c);c=s}else c=n});o.push(c);return o}
 function canvas(){const{tt,L}=sumLines(),W=1000,c=document.createElement('canvas'),x=c.getContext('2d');x.font='17px Arial';const rows=[];L.forEach(([t,s])=>{x.font=(s===1?'bold 18px':s===2?'italic 16px':'17px')+' Arial';(t?wrapTxt(x,t,W-80):['']).forEach((r,k)=>rows.push([k&&t.startsWith('• ')?'   '+r:r,s]))});
  c.width=W;c.height=190+rows.length*26+30;x.fillStyle='#ffffff';x.fillRect(0,0,W,c.height);
@@ -773,7 +787,7 @@ function canvas(){const{tt,L}=sumLines(),W=1000,c=document.createElement('canvas
  x.font='bold 64px Arial';x.textAlign='right';x.fillText(String(tt.g),W-40,96);x.font='16px Arial';x.fillText('з 12',W-40,124);x.textAlign='left';
  rows.forEach(([r,s],k)=>{x.font=(s===1?'bold 18px':s===2?'italic 16px':'17px')+' Arial';x.fillStyle=s===2?'#5b6478':'#1d2433';x.fillText(r,40,190+k*26)});return c}
 function saveImg(){canvas().toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='html_forms_'+(S.me.sn+'_'+S.me.fn).replace(/[^\p{L}\p{N}_-]+/gu,'_')+'.png';document.body.append(a);a.click();a.remove();$('#sm').textContent='Зображення збережено ✔'})}
-async function send(b){const{tt,E}=sumLines();const F={'Прізвище':S.me.sn,"Ім'я":S.me.fn,'Клас':S.me.cl,'Статус':LV[S.lvl].full,'Макс. оцінка статусу':tt.cap,'Бали':tt.P,'Макс. балів':tt.M,'Відсоток':tt.pc,'Орієнтовна оцінка (12-бальна)':tt.g,'Кількість перезапусків':S.restarts||0};
+async function send(b){const{tt,E}=sumLines();const F={'Прізвище':S.me.sn,"Ім'я":S.me.fn,'Клас':S.me.cl,'Статус':LV[S.lvl].full,'Макс. оцінка статусу':LV[S.lvl].cap,...Object.fromEntries(tt.sp.map(x=>['Спринт '+(x.k+1)+' ('+LV[x.k].n+')',x.open?fmtP(x.p)+'/'+x.max:'не відкрито'])),'Розрахунок оцінки':calcTxt(tt),'Орієнтовна оцінка (12-бальна)':tt.g,'Кількість перезапусків':S.restarts||0};
  T.forEach((t,i)=>{F[t.id+' '+t.kind]=open(i)?(S.t[i].att?fmtP(S.t[i].best.p):'0')+'/1 (спроб: '+S.t[i].att+')':'не відкрито'});
  F['Кількість помилок']=E.length;F['Допущені помилки']=E.map(plain).join('\n')||'немає';
  b.disabled=true;$('#sm').textContent='Надсилання…';
