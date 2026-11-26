@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ВебКузня: форма запису на гуртки · HTML. Форми</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* VOICE   робоче середовище веб-студії: учень — новий співробітник, завдання — тікети
+   IDEA    дошка задач + макет сайту ліцею, що збирається з кожним перевіреним тікетом
+   COLOUR  темний «IDE»-фон, фіолетовий акцент, бірюзові статуси; світла тема — за налаштуваннями пристрою
+   TYPE    Onest (інтерфейс) + JetBrains Mono (код) — обидва з кирилицею */
+:root{color-scheme:dark;--bg:#0c0f16;--bg2:#10141d;--pan:#151a25;--pan2:#1b2130;--bd:#283042;--bd2:#36405a;--tx:#e9ecf4;--mu:#949db2;--ac:#7c5cff;--act:#b3a2ff;--ac2:#22d3ee;
+--ok:#34d399;--okb:rgba(52,211,153,.13);--wa:#fbbf24;--wab:rgba(251,191,36,.13);--no:#f87171;--nob:rgba(248,113,113,.13);--code:#0a0d14;--sh:0 12px 34px rgba(0,0,0,.4)}
+@media(prefers-color-scheme:light){:root{color-scheme:light;--bg:#f1f2f7;--bg2:#e8eaf2;--pan:#fff;--pan2:#f5f6fa;--bd:#dce0ea;--bd2:#c9cfdd;--tx:#151a27;--mu:#596277;--ac:#5b3df5;--act:#4a2fe0;--ac2:#0a87a3;
+--ok:#0b8a5f;--okb:#e1f5ec;--wa:#9a5b00;--wab:#fdf2d4;--no:#cf2f2f;--nob:#fdeaea;--sh:0 12px 34px rgba(20,30,60,.12)}}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Onest,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+code,.mono{font-family:"JetBrains Mono",Consolas,monospace}
+code{font-size:.86em;background:var(--pan2);border:1px solid var(--bd);border-radius:5px;padding:0 5px;overflow-wrap:anywhere}
+:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+h1,h2,h3,h4{line-height:1.2;text-wrap:balance}
+.wrap{max-width:1220px;margin:0 auto;padding-inline:max(3vw,14px)}
+.muted{color:var(--mu)}
+/* ---------- верхня панель ---------- */
+#top{position:sticky;top:0;z-index:30}.top{background:var(--bg);border-bottom:1px solid var(--bd)}
+.top .wrap{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;padding-block:10px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:-.01em}
+.logo b{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--ac),#c026d3);color:#fff;font-size:17px}
+.logo span small{display:block;font-weight:500;font-size:12px;color:var(--mu);letter-spacing:0}
+.prog{flex:1 1 220px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--mu);font-weight:600}
+.pbar{flex:1;height:8px;border-radius:6px;background:var(--pan2);border:1px solid var(--bd);overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.me{display:flex;align-items:center;gap:8px;font-size:14px}
+.av{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--pan2);border:1px solid var(--bd);font-weight:700;font-size:13px;flex:none}
+.lv{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:2px 10px;font:700 12.5px/1.6 Onest,sans-serif;border:1px solid currentColor;white-space:nowrap}
+/* ---------- кнопки ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 16px;border-radius:10px;border:1px solid var(--bd2);background:var(--pan);cursor:pointer;font-weight:600;font-size:15px;text-decoration:none}
+.btn:hover{border-color:var(--act)}
+.btn.main{background:var(--ac);border-color:var(--ac);color:#fff}.btn.main:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#06281b}
+.btn[disabled]{opacity:.45;cursor:default;filter:none}
+main{padding:22px 0 60px}
+.card{background:var(--pan);border:1px solid var(--bd);border-radius:16px;padding:clamp(16px,2.6vw,28px)}
+/* ---------- старт ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px}
+.hero h1{font-size:clamp(28px,4.2vw,44px);margin:6px 0 10px;letter-spacing:-.02em}
+.kick{font:600 13px "JetBrains Mono",monospace;color:var(--act)}
+.ladder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.step{border:1px solid var(--bd);border-radius:12px;padding:12px;background:var(--pan2)}
+.step b{display:block;font-size:17px}.step span{font-size:13.5px;color:var(--mu)}
+.step .cap{display:block;font:800 26px/1.1 Onest,sans-serif;margin-top:6px}
+.rules{margin:10px 0 0;padding-left:20px}.rules li{margin:4px 0}
+.team{display:grid;gap:10px}
+.person{display:flex;gap:11px;align-items:center}
+.person .av{width:40px;height:40px;font-size:20px}
+.person small{display:block;color:var(--mu);font-size:13px}
+.form-in{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.form-in label{font-size:13px;color:var(--mu);font-weight:600}
+.form-in input{width:100%;min-height:46px;margin-top:4px;padding:8px 12px;border-radius:10px;border:1px solid var(--bd2);background:var(--bg2)}
+.err{color:var(--no);font-weight:600;min-height:1.4em}
+/* ---------- дошка ---------- */
+.bhead{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+.bhead h2{margin:0;font-size:clamp(24px,3vw,32px)}
+.bhead p{margin:4px 0 0;color:var(--mu)}
+.bgrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+.sprint{background:var(--pan);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:14px}
+.sprint.lock{opacity:.55}
+.shead{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.shead h3{margin:0;font-size:17px}
+.shead .sp{margin-left:auto;font-size:13px;color:var(--mu);font-weight:600}
+.tks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tk{position:relative;text-align:left;display:flex;flex-direction:column;gap:6px;padding:12px 12px 11px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--pan2);cursor:pointer;min-height:118px}
+.tk::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--st,var(--bd2))}
+.tk:hover:not([disabled]){border-color:var(--act);transform:translateY(-1px)}
+.tk[disabled]{cursor:not-allowed}
+.tk .row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mu)}
+.tk .id{font:600 12px "JetBrains Mono",monospace;color:var(--act)}
+.tk .kind{margin-left:auto;background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:0 8px;font-weight:600}
+.tk b{font-size:15.5px;line-height:1.3}
+.tk .stt{margin-top:auto;display:flex;gap:8px;align-items:center;font-size:12.5px;font-weight:600;color:var(--st,var(--mu))}
+.dots{display:inline-flex;gap:3px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--bd2)}.dots i.on{background:var(--ac2)}
+.lockmsg{font-size:14px;color:var(--mu);padding:10px 12px;border:1px dashed var(--bd2);border-radius:10px}
+.promo{margin-top:12px;font-size:13.5px;color:var(--mu)}
+.promo .pbar{margin-top:6px;height:6px}
+/* ---------- макет сайту ліцею ---------- */
+.mock{position:sticky;top:76px}
+.mock h3{margin:0 0 4px;font-size:16px}.mock>p{margin:0 0 10px;font-size:13.5px;color:var(--mu)}
+.brw{border-radius:12px;overflow:hidden;border:1px solid var(--bd2);box-shadow:var(--sh);background:#fff}
+.brw .bar{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#e8ebf2;border-bottom:1px solid #d4d9e4}
+.brw .bar i{width:10px;height:10px;border-radius:50%;background:#f87171;flex:none}.brw .bar i:nth-child(2){background:#fbbf24}.brw .bar i:nth-child(3){background:#34d399}
+.brw .url{flex:1;background:#fff;border-radius:6px;padding:3px 10px;font:12px "JetBrains Mono",monospace;color:#4b5468;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.site{color:#1d2433;font:14px/1.45 Arial,sans-serif;max-height:min(70vh,640px);overflow:auto}
+.site header{background:#0f4c81;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:10px;font-weight:700}
+.site header small{font-weight:400;opacity:.85;margin-left:auto;font-size:12px}
+.site .pg{padding:12px 14px 16px}
+.mk{margin:0 0 10px}
+.mk label,.mk .lb{display:block;font-weight:700;font-size:13px;margin:0 0 3px}
+.mk input:not([type=radio]):not([type=checkbox]),.mk select,.mk textarea{width:100%;padding:6px 8px;border:1px solid #b9c1d1;border-radius:6px;font:13px Arial,sans-serif;background:#fff;color:#1d2433}
+.mk .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mk .inl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px}.mk .inl label{display:inline;font-weight:400}
+.mk fieldset{border:1px solid #b9c1d1;border-radius:8px;padding:8px 10px}
+.mk legend{font-weight:700;color:#0f4c81;padding:0 4px}
+.mk .btns{display:flex;gap:8px}.mk .btns span{padding:7px 14px;border-radius:6px;background:#0f4c81;color:#fff;font-weight:700}.mk .btns span+span{background:#e3e7ef;color:#1d2433}
+.mk.ph{border:1.5px dashed #c5ccd9;border-radius:8px;padding:9px;color:#7b8499;font-size:12.5px;text-align:center;background:#f7f8fb}
+.mk.new{animation:pop .6s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(8px);background:#fff4c2}to{opacity:1;transform:none}}
+/* ---------- тікет ---------- */
+.crumbs{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:14px;color:var(--mu)}
+.thead{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13.5px;color:var(--mu)}
+.thead .id{font:600 13px "JetBrains Mono",monospace;color:var(--act)}
+.chip-k{background:var(--wab);color:var(--wa);border-radius:20px;padding:1px 10px;font-weight:700}
+.thead .att{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:600}
+.ticket h2{font-size:clamp(23px,3vw,32px);margin:8px 0 14px;letter-spacing:-.01em}
+.msg{display:flex;gap:12px;align-items:flex-start;margin-bottom:18px}
+.msg .av{width:44px;height:44px;font-size:22px}
+.msg .who{font-size:14px}.msg .who b{font-size:15px}.msg .who span{color:var(--mu)}
+.bubble{margin-top:6px;background:var(--pan2);border:1px solid var(--bd);border-radius:4px 14px 14px 14px;padding:11px 14px;max-width:880px}
+.bubble p{margin:.2em 0 .55em}.bubble p:last-child{margin-bottom:.1em}.bubble ul{margin:.2em 0 .5em;padding-left:20px}
+#tb.lock{opacity:.8}
+.locknote{margin-bottom:12px;padding:9px 13px;border-radius:10px;background:var(--pan2);border:1px dashed var(--bd2);font-size:14px;color:var(--mu)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--bd)}
+.actions .push{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.fb{margin-top:16px;border-radius:12px;padding:12px 16px;border:1px solid}
+.fb.ok{background:var(--okb);border-color:var(--ok)}.fb.no{background:var(--wab);border-color:var(--wa)}
+.fb b.big{font-size:18px}.fb p{margin:6px 0 0}
+/* ---------- код ---------- */
+pre.code{margin:10px 0;padding:12px 14px;border-radius:12px;background:var(--code);color:#e6e9f4;font:13.5px/1.65 "JetBrains Mono",Consolas,monospace;overflow-x:auto;white-space:pre;border:1px solid #1f2638}
+.hlc .t{color:#ff8fc8}.hlc .a{color:#8fd3ff}.hlc .s{color:#ffd479}.hlc .c{color:#7d88a6;font-style:italic}
+/* ---------- тест ---------- */
+.qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.q{background:var(--pan2);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.q h4{margin:0 0 8px;font-size:15.5px;font-weight:600}
+.q small{display:block;color:var(--wa);margin:-4px 0 6px;font-weight:600}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;min-height:42px;border-radius:8px;border:1px solid transparent;cursor:pointer}
+.opt:hover{background:var(--pan)}.opt:has(input:checked){border-color:var(--act);background:var(--pan)}
+.opt input{margin:3px 0 0;width:18px;height:18px;flex:none;accent-color:var(--ac)}
+/* ---------- з'єднування ---------- */
+.wires{position:relative;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(46px,9vw,140px)}
+.wires svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wire{fill:none;stroke:var(--ac);stroke-width:3;stroke-linecap:round}.wire.tmp{stroke:var(--ac2);stroke-dasharray:6 5}
+.col{display:grid;gap:9px;align-content:start}.col>h4{margin:0;font-size:13px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+.node{position:relative;z-index:1;touch-action:none;user-select:none;-webkit-user-select:none;text-align:left;width:100%;min-height:50px;padding:8px 14px;border:1px solid var(--bd2);border-radius:10px;background:var(--pan2);cursor:pointer;font-size:14.5px;line-height:1.35}
+.node.r{font:600 14px "JetBrains Mono",monospace;padding-left:18px}
+.node::after{content:"";position:absolute;top:50%;width:14px;height:14px;margin-top:-7px;border-radius:50%;background:var(--pan);border:3px solid var(--ac)}
+.node.l::after{right:-8px}.node.r::after{left:-8px}
+.node.pick{border-color:var(--ac2);box-shadow:0 0 0 2px var(--ac2)}.node.linked::after{background:var(--ac)}
+/* ---------- перетягування ---------- */
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:60px;padding:12px;background:var(--bg2);border:1.5px dashed var(--bd2);border-radius:12px;margin-bottom:12px}
+.buckets{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.bucket{display:flex;flex-direction:column;gap:8px;padding:10px;min-height:170px;border:1.5px solid var(--bd);border-radius:12px;background:var(--pan2);cursor:pointer}
+.bucket h4{margin:0;font-size:14px}.bucket .in{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;flex:1}
+.over{border-color:var(--ac2)!important;background:color-mix(in srgb,var(--ac2) 12%,var(--pan2))!important}
+.has-pick .bucket,.has-pick .pool{border-style:dashed;border-color:var(--act)}
+.chip{touch-action:none;user-select:none;-webkit-user-select:none;min-height:38px;padding:6px 11px;border:1px solid var(--act);border-radius:8px;background:var(--pan);cursor:grab;font:600 14px "JetBrains Mono",Consolas,monospace;overflow-wrap:anywhere;text-align:left}
+.chip.pick{background:var(--ac);border-color:var(--ac);color:#fff}
+.lift{opacity:.3}.dghost{position:fixed;left:0;top:0;z-index:90;pointer-events:none;box-shadow:var(--sh);margin:0!important;opacity:.95}
+/* пропуски в коді */
+.bl{display:inline-flex;vertical-align:middle;align-items:center;justify-content:center;min-width:92px;min-height:34px;padding:2px;margin:2px 0;border-radius:8px;border:2px dashed #5d6888;background:rgba(255,255,255,.04);color:#7d88a6}
+.bl .chip{min-height:28px;padding:2px 8px;font-size:13px;background:#232b40;color:#ffd479;border-color:#ffd479}
+/* ---------- порядок ---------- */
+.lines{display:grid;gap:5px;background:var(--code);border-radius:12px;padding:10px;border:1px solid #1f2638}
+.oline{display:flex;align-items:center;gap:6px;min-height:44px;padding:3px 5px 3px 0;background:#161d2e;border:1px solid #2a3450;border-radius:8px;cursor:grab;user-select:none;-webkit-user-select:none;color:#e6e9f4}
+.oline.mk{box-shadow:0 -3px 0 var(--ac2)}.oline.mkb{box-shadow:0 3px 0 var(--ac2)}
+.oline pre{flex:1;margin:0;font:13.5px/1.5 "JetBrains Mono",monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.grip{touch-action:none;width:30px;align-self:stretch;display:flex;align-items:center;justify-content:center;color:#7d88a6;flex:none;cursor:grab}
+.mv{width:38px;height:38px;flex:none;border:0;border-radius:7px;background:#26304a;color:#fff;cursor:pointer}.mv[disabled]{opacity:.3}
+/* ---------- вибір, так/ні ---------- */
+.sit{border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:0 0 10px;background:var(--pan2)}
+.sit>p{margin:0 0 8px;font-weight:500}
+.cline{display:block;background:var(--code);color:#e6e9f4;border-radius:9px;padding:8px 12px;font:13px/2 "JetBrains Mono",monospace;overflow-wrap:anywhere;border:1px solid #1f2638}
+select.asel{font:600 13px "JetBrains Mono",monospace;padding:5px 8px;min-height:38px;border-radius:7px;border:2px solid var(--wa);background:#232b40;color:#ffd479;max-width:100%}
+.tf{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px dashed var(--bd);padding:9px 0}
+.tf>span{flex:1 1 320px}.tf .bb{display:flex;gap:8px}
+.yn{min-width:76px;min-height:42px;border:1px solid var(--bd2);border-radius:9px;background:var(--pan2);cursor:pointer;font-weight:700}
+.yn.on{border-color:var(--ac);background:var(--ac);color:#fff}
+.two{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+/* знайти помилки */
+.blines{background:var(--code);border-radius:12px;padding:8px 0;overflow-x:auto;border:1px solid #1f2638}
+.cl{display:grid;grid-template-columns:40px minmax(max-content,1fr);gap:8px;padding:4px 12px 4px 0;font:13.5px/1.6 "JetBrains Mono",monospace;cursor:pointer;border-left:4px solid transparent;white-space:pre;color:#e6e9f4;width:100%;text-align:left;background:none;border-top:0;border-right:0;border-bottom:0}
+.cl:hover{background:rgba(255,255,255,.05)}.cl .n{color:#5d6888;text-align:right;user-select:none}
+.cl.sel{background:rgba(251,191,36,.16);border-left-color:#fbbf24}
+/* симуляції */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:12px}
+.att{border:1px solid var(--bd);border-radius:12px;padding:12px;background:var(--pan2)}
+.att h4{margin:0 0 6px;font-size:15px}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 10px;font-size:13.5px;margin-bottom:10px}
+.kv b{color:var(--mu);font-weight:600}
+.kv .diff{color:var(--wa);font-weight:700}
+.att .bb{display:flex;gap:6px}.att .yn{flex:1;min-width:0;font-size:13.5px}
+.scn{border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:0 0 12px;background:var(--pan2)}
+.scn h4{margin:0 0 4px;font-size:15.5px}.scn .act{margin:8px 0;font-weight:500}
+.scn .opt span{font:13.5px "JetBrains Mono",monospace;overflow-wrap:anywhere}
+/* ---------- редактор ---------- */
+.ide{border-radius:12px;overflow:hidden;border:1px solid #232b40;background:var(--code)}
+.ide-top{display:flex;align-items:center;gap:10px;padding:7px 12px;background:#111625;border-bottom:1px solid #232b40;color:#8f98ad;font:12.5px "JetBrains Mono",monospace}
+.ide-top .d{display:inline-flex;gap:5px}.ide-top .d i{width:10px;height:10px;border-radius:50%;background:#3a4460}
+.ide-top .fn{color:#e6e9f4;background:#0a0d14;border:1px solid #232b40;border-bottom:0;border-radius:6px 6px 0 0;padding:3px 10px;margin-bottom:-8px}
+.ide-top .ln{margin-left:auto}
+.kb{display:flex;gap:5px;overflow-x:auto;padding:7px 8px;background:#0f1320;border-bottom:1px solid #232b40;scrollbar-width:thin}
+.kb button{flex:none;min-height:34px;padding:3px 10px;border-radius:7px;border:1px solid #2c3652;background:#1a2133;color:#cfd6ea;font:600 12.5px "JetBrains Mono",monospace;cursor:pointer}
+.kb button:hover{border-color:#7c5cff}
+.ed{overflow:auto;max-height:560px;min-height:220px}
+.edin{display:grid;grid-template-columns:auto minmax(0,1fr);min-width:100%;width:max-content}
+.gut{position:sticky;left:0;z-index:2;background:#0d111b;color:#4b5570;text-align:right;padding:12px 10px 12px 12px;margin:0;font:13.5px/1.6 "JetBrains Mono",monospace;user-select:none;border-right:1px solid #1c2336;white-space:pre}
+.cell{display:grid}
+.cell>pre,.cell>textarea{grid-area:1/1;margin:0;padding:12px 14px;border:0;font:13.5px/1.6 "JetBrains Mono",Consolas,monospace;white-space:pre;tab-size:2;overflow:hidden;min-height:220px;letter-spacing:0}
+.cell>pre{color:#e6e9f4}
+.cell>textarea{width:100%;resize:none;background:transparent;color:transparent;caret-color:#fff;outline:0;-webkit-text-fill-color:transparent}
+.cell>textarea::selection{background:rgba(124,92,255,.45)}
+.ide:focus-within{box-shadow:0 0 0 2px var(--ac)}
+@media(pointer:coarse){.cell>pre,.cell>textarea,.gut{font-size:16px}}
+.brw.pv iframe{display:block;width:100%;height:220px;border:0;background:#fff}
+.req{margin:0 0 14px;padding:12px 14px 12px 34px;background:var(--pan2);border:1px solid var(--bd);border-radius:12px;columns:2;column-gap:28px}
+.req li{margin-bottom:5px;break-inside:avoid;font-size:14.5px}
+/* ---------- модальне вікно ---------- */
+.ov{position:fixed;inset:0;z-index:100;background:rgba(5,8,14,.6);display:grid;place-items:center;padding:16px}
+.modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:var(--pan);border:1px solid var(--bd2);border-radius:18px;padding:22px;box-shadow:var(--sh);animation:pop2 .25s ease-out}
+.modal h3{margin:0 0 8px;font-size:22px}.modal .big{font-size:44px;line-height:1}
+.modal .mb{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:16px}
+.modal ul{padding-left:20px}
+@keyframes pop2{from{opacity:0;transform:scale(.96)}}
+/* ---------- підсумок ---------- */
+.sgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:18px;align-items:start}
+.grade{font:800 clamp(64px,9vw,96px)/1 Onest,sans-serif;letter-spacing:-.04em;background:linear-gradient(135deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th,.tbl td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+.tbl th{color:var(--mu);font-weight:600;font-size:13px}
+.tbl td.n{white-space:nowrap;text-align:right}
+.errs{padding-left:20px;margin:8px 0}.errs li{margin:5px 0;font-size:14.5px}
+.note{color:var(--mu);font-size:14.5px}
+@media(max-width:980px){.bgrid,.hero,.sgrid{grid-template-columns:minmax(0,1fr)}.mock{position:static}.buckets{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.qs,.tks,.ladder,.form-in{grid-template-columns:minmax(0,1fr)}.req{columns:1}.actions .push{margin-left:0;width:100%}.actions .push .btn{flex:1}.thead .att{margin-left:0;width:100%}.prog{order:3;flex-basis:100%}.logo span small{display:none}.me .nm{display:none}.top .wrap{padding-block:8px;gap:6px 12px}.me{margin-left:auto}}
+@media(max-width:440px){.buckets{grid-template-columns:minmax(0,1fr)}.bucket{min-height:90px}.node{font-size:13px;padding:7px 10px}.node.r{font-size:12.5px;padding-left:14px}.wires{gap:34px}.me .nm{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="top"></div>
+<main><div class="wrap" id="stage"></div></main>
+<noscript><p style="padding:20px">Для виконання завдання увімкніть JavaScript.</p></noscript>
+<script>
+{
+/* ================= налаштування ================= */
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycby5JuoBDhkyMaeFKb3bjrhbHsIZIhM4f741IKFEZzoxtfYlNnycEXdbmtxjUtl1QQYyRw/exec",KEY="змініть-на-свій-ключ",TASK="HTML. Форми — замовлення ВебКузні";
+const MAXATT=3;          // спроб на кожен тікет
+const PROMO=[0.5,0.75];  // частка балів спринту для підвищення: до Junior — 2 з 4, до Middle — 3 з 4
+const SAVE="vebkuznia-forms-v1";
+const LV=[{n:'Стажер',full:'Стажер',cap:8,c:'#94a3b8'},{n:'Junior',full:'Junior (молодший розробник)',cap:10,c:'#22d3ee'},{n:'Middle',full:'Middle (розробник середнього рівня)',cap:12,c:'#b39dff'}];
+const TH=[[95,12],[88,11],[81,10],[74,9],[67,8],[60,7],[50,6],[40,5],[30,4],[20,3],[10,2],[0,1]];
+const WHO={pm:{n:'Олена Коваль',r:'менеджерка проєкту (Project Manager)',e:'👩‍💼',c:'#f59e0b'},lead:{n:'Андрій Мельник',r:'тімлід (Team Lead)',e:'👨‍💻',c:'#7c5cff'},qa:{n:'Марта Бондар',r:'тестувальниця (QA-інженерка)',e:'🕵️‍♀️',c:'#22d3ee'},client:{n:'Ганна Петрівна',r:'директорка ліцею «Обрій», замовниця',e:'🏫',c:'#34d399'}};
+
+/* ================= помічники ================= */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>esc(s).replace(/\[\[(.+?)\]\]/g,'<code>$1</code>');
+const plain=s=>String(s).replace(/\[\[(.+?)\]\]/g,'$1');
+const mapRe=(s,re,f)=>{let o='',i=0,m;re.lastIndex=0;while((m=re.exec(s))){if(!m[0]){re.lastIndex++;continue}o+=esc(s.slice(i,m.index))+f(m);i=m.index+m[0].length}return o+esc(s.slice(i))};
+const hlTag=m=>{const r=m[0];if(r.startsWith('<!--'))return`<span class="c">${esc(r)}</span>`;
+ const p=r.match(/^(<\/?)([\w-]+)([\s\S]*?)(\/?>)?$/);if(!p)return esc(r);
+ const at=mapRe(p[3],/([^\s=]+)(\s*=\s*)?("[^"]*"?|'[^']*'?|[^\s]+)?/g,a=>`<span class="a">${esc(a[1])}</span>${esc(a[2]||'')}${a[3]?`<span class="s">${esc(a[3])}</span>`:''}`);
+ return`<span class="t">${esc(p[1]+p[2])}</span>${at}<span class="t">${esc(p[4]||'')}</span>`};
+const hl=s=>mapRe(s,/<!--[\s\S]*?(?:-->|$)|<\/?[a-zA-Z][^>]*>?/g,hlTag);
+const code=s=>`<pre class="code hlc">${hl(s)}</pre>`;
+const pts=r=>r>=1?1:r>=.5?.5:r>0?.25:0;
+const fmtP=p=>String(p).replace('.',',');
+const pick=a=>a[Math.random()*a.length|0];
+const PRZ=['Чудово! Жодної помилки — тімлід задоволений! 🎉','Бездоганно! Код приймаємо в реліз! 🚀','Відмінна робота! Тікет закрито без зауважень! 👏'];
+const MOT=['Нічого страшного: навіть у досвідчених розробників код повертають на доопрацювання. 💪','Кожна помилка, знайдена зараз, — це баг, якого не побачить замовник. Ви на правильному шляху! 🙂','Не зупиняйтеся — уважно перечитайте умову, і все вийде! 🚀'];
+
+/* перевірка коду через DOMParser */
+const parse=c=>new DOMParser().parseFromString('<!doctype html><body>'+c,'text/html');
+const labelsOf=(d,el)=>el&&el.id?$$('label',d).filter(l=>l.getAttribute('for')===el.id&&l.textContent.trim()):[];
+const byLabel=(d,re)=>{const l=$$('label',d).find(x=>re.test(x.textContent));return l&&l.getAttribute('for')?d.getElementById(l.getAttribute('for')):null};
+const typeOf=el=>el&&(el.getAttribute('type')||'').toLowerCase();
+const uniqueIds=d=>{const a=$$('[id]',d).map(e=>e.id);return new Set(a).size===a.length};
+const closed=raw=>{const s=raw.replace(/<!--[\s\S]*?-->/g,'');return['form','fieldset','legend','label','select','textarea','button'].filter(t=>(s.match(new RegExp('<'+t+'[\\s>]','gi'))||[]).length!==(s.match(new RegExp('</'+t+'\\s*>','gi'))||[]).length)};
+const runRules=(rules,raw)=>{const d=parse(raw);return rules.map(r=>{const ok=!!r.ok(d,raw);return{ok,m:ok?'':(typeof r.bad==='function'?r.bad(d,raw):r.bad)}})};
+const ruleGrade=(rules,raw)=>{const r=runRules(rules,raw);return{ok:r.filter(x=>x.ok).length,tot:r.length,err:r.filter(x=>!x.ok).map(x=>x.m),unit:'невиконаних вимог'}};
+
+/* ================= дані завдань ================= */
+const TYD={text:'однорядковий текст',password:'пароль із прихованими символами',email:'адреса пошти з перевіркою @',tel:'телефон (цифрова клавіатура на смартфоні)',url:'адреса сайту',search:'пошуковий запит',number:'число зі стрілками',date:'дата з календарем',time:'години й хвилини','datetime-local':'дата й місцевий час',month:'місяць і рік',week:'порядковий тиждень',color:'палітра кольорів',range:'повзунок',checkbox:'прапорець (незалежний вибір)',radio:'перемикач (один варіант із групи)',file:'вибір файлу',submit:'кнопка надсилання форми',reset:'кнопка очищення форми',button:'звичайна кнопка для JavaScript',image:'кнопка-зображення',hidden:'приховане поле'};
+
+/* 1. тест */
+const QS=[
+ {q:'Який атрибут тега [[<form>]] (форма) вказує адресу скрипта-обробника, куди підуть дані?',o:['[[action]]','[[method]]','[[autocomplete]]','[[name]]'],a:[0],e:'адресу обробника задає [[action]] («куди?»), а [[method]] — спосіб передавання («як?»).'},
+ {q:'Анкета запису на гуртки містить телефон і дату народження учня. Який метод передавання доречний?',o:['[[GET]]','[[POST]]'],a:[1],e:'особисті дані надсилають методом [[POST]]: вони йдуть у тілі запиту й не потрапляють в адресний рядок та історію браузера.'},
+ {q:'Що об’єднує перемикачі [[radio]] в одну групу, де можна обрати лише один варіант?',o:['однаковий [[name]]','однаковий [[id]]','однаковий [[value]]','спільний [[<label>]]'],a:[0],e:'групу перемикачів створює однаковий [[name]]; [[id]] у кожного має бути унікальним, а [[value]] — різним.'},
+ {q:'Учень клацає на підпис [[<label for="u_mail">Пошта</label>]]. Що станеться?',o:['фокус отримає поле з [[id="u_mail"]]','фокус отримає поле з [[name="u_mail"]]','форма надішлеться на сервер','нічого — це просто текст'],a:[0],e:'атрибут [[for]] у [[<label>]] шукає поле за [[id]], а не за [[name]].'},
+ {multi:1,q:'Для чого потрібен атрибут [[id]] (ідентифікатор)?',o:['щоб зв’язати поле з [[<label>]] через [[for]]','щоб стилізувати елемент у CSS','щоб звертатися до елемента з JavaScript','щоб об’єднати перемикачі в групу','щоб задати ім’я даних для сервера'],a:[0,1,2],e:'[[id]] — унікальна «адреса» елемента для [[<label for>]], CSS і JavaScript; групу перемикачів та ім’я даних задає [[name]].'},
+ {q:'Який тег задає заголовок групи полів, обведених рамкою [[<fieldset>]]?',o:['[[<legend>]]','[[<label>]]','[[<caption>]]','[[<title>]]'],a:[0],e:'заголовок рамки [[<fieldset>]] — це [[<legend>]], він стоїть першим усередині групи.'},
+ {q:'Що робить атрибут [[autocomplete="off"]] у тегу [[<form>]]?',o:['вимикає автозаповнення полів браузером','забороняє відправляти форму','очищає форму після відправлення','вимикає перевірку [[required]]'],a:[0],e:'[[autocomplete]] (автозаповнення) зі значенням [[off]] забороняє браузеру підставляти раніше введені дані.'},
+ {q:'Яким тегом створюють багаторядкове поле для побажань учня?',o:['[[<textarea>]]','[[<input type="textarea">]]','[[<input type="text" rows="4">]]','[[<text>]]'],a:[0],e:'багаторядкове поле — окремий парний тег [[<textarea>…</textarea>]]; типу [[textarea]] в [[<input>]] не існує.'}];
+
+/* 2. з'єднання: дані → type */
+const L2=[['Прізвище та ім’я учня','text'],['Електронна пошта батьків','email'],['Телефон для зв’язку (на смартфоні — цифрова клавіатура)','tel'],['Дата народження (з календарем)','date'],['Клас: ціле число від 5 до 11 зі стрілками','number'],['Зручний час початку занять (години й хвилини)','time'],['Фото для пропуска на заняття','file'],['Колір футболки команди (вибір із палітри)','color']];
+const R2=['url','tel','date','password','text','week','color','number','range','email','file','time'];
+
+/* 3. групування */
+const BK3=[['key','⌨️ Введення з клавіатури'],['dt','📅 Дата і час'],['pick','🎛️ Вибір значення чи файлу'],['btn','🔘 Кнопки'],['hid','🙈 Не видно на сторінці']];
+const CH3={password:'key',week:'dt',checkbox:'pick',submit:'btn',url:'key',range:'pick','datetime-local':'dt',hidden:'hid',reset:'btn',search:'key',file:'pick',month:'dt',image:'btn',number:'key',radio:'pick',time:'dt'};
+
+/* 4. порядок */
+const LN4={f:'<form action="/register.php" method="POST">',fs1:'<fieldset>',lg1:'<legend>Дані учня</legend>',l1:'<label for="st_name">Прізвище та ім’я:</label>',i1:'<input type="text" id="st_name" name="fullname" required>',l2:'<label for="st_grade">Клас:</label>',i2:'<input type="number" id="st_grade" name="grade" min="5" max="11">',xfs1:'</fieldset>',fs2:'<fieldset>',lg2:'<legend>Вибір гуртка</legend>',l3:'<label for="st_club">Гурток:</label>',i3:'<select id="st_club" name="club">…</select>',xfs2:'</fieldset>',b:'<button type="submit" id="btn_send">Надіслати заявку</button>',xf:'</form>'};
+const ST4=['i2','xfs2','lg2','f','l3','b','fs1','i1','xf','lg1','l1','xfs1','i3','fs2','l2'];
+
+/* 5. атрибути */
+const AT5=['readonly','disabled','placeholder="Петренко Іван"','required','checked','maxlength="10"','autofocus','multiple'];
+const ORD5=[3,6,0,5,2,7,1,4];
+const RW5=[
+ {q:'Назву закладу сайт підставив сам: її видно, змінити не можна, але вона надсилається разом із заявкою.',pre:'<input type="text" id="school" name="school" value="Ліцей «Обрій»"',post:'>',a:0,why:'потрібен [[readonly]] (лише для читання): значення не змінити, але воно надсилається; [[disabled]] теж блокує поле, проте таке поле НЕ надсилається.'},
+ {q:'Кнопка «Надіслати заявку» сіра й не натискається, доки адміністратор не відкрив набір.',pre:'<button type="submit" id="send"',post:'>Надіслати заявку</button>',a:1,why:'[[disabled]] (вимкнено) робить елемент неактивним.'},
+ {q:'У порожньому полі ПІБ видно сірий зразок «Петренко Іван», який зникає, щойно учень починає друкувати.',pre:'<input type="text" id="fio" name="fullname"',post:'>',a:2,why:'[[placeholder]] (текст-підказка) — сірий зразок у порожньому полі, він не надсилається.'},
+ {q:'Без пошти батьків заявка не відправиться — браузер покаже повідомлення біля поля.',pre:'<input type="email" id="mail" name="email"',post:'>',a:3,why:'[[required]] (обов’язкове поле) не дає відправити форму з порожнім полем.'},
+ {q:'Перемикач «Очна форма занять» уже вибраний, щойно сторінка відкривається.',pre:'<input type="radio" id="f_off" name="format" value="offline"',post:'> Очна',a:4,why:'[[checked]] (позначено) вмикає перемикач чи прапорець від початку.'},
+ {q:'У поле «Номер учнівського квитка» можна ввести не більше 10 символів — одинадцятий просто не надрукується.',pre:'<input type="text" id="ticket" name="ticket"',post:'>',a:5,why:'[[maxlength]] (максимальна довжина) обмежує кількість символів.'},
+ {q:'Щойно сторінка відкрилася, курсор уже блимає в полі «Прізвище».',pre:'<input type="text" id="surname" name="surname"',post:'>',a:6,why:'[[autofocus]] (автофокус) ставить курсор у поле одразу після завантаження сторінки.'},
+ {q:'У списку «Додаткові секції» можна позначити кілька пунктів (на комп’ютері — з клавішею Ctrl).',pre:'<select id="extra" name="extra"',post:'>…</select>',a:7,why:'[[multiple]] (кілька значень) дозволяє вибрати кілька пунктів у [[<select>]].'}];
+
+/* 6. так / ні */
+const SEL6=`<label for="club">Гурток:</label>
+<select id="club" name="club" required>
+  <option value="">— оберіть гурток —</option>
+  <optgroup label="ІТ">
+    <option value="robot">Робототехніка</option>
+    <option value="web" selected>Веб-дизайн</option>
+  </optgroup>
+  <optgroup label="Спорт">
+    <option value="volley">Волейбол</option>
+    <option>Шахи</option>
+  </optgroup>
+</select>`;
+const ST6=[
+ {q:'Щойно сторінка відкриється, у списку буде видно «Веб-дизайн».',a:true,why:'атрибут [[selected]] робить пункт вибраним від початку.'},
+ {q:'Якщо учень обере «Волейбол», на сервер піде [[club=Волейбол]].',a:false,why:'надсилається [[value]], а не текст пункту: [[club=volley]].'},
+ {q:'«ІТ» і «Спорт» теж можна вибрати як гурток.',a:false,why:'[[<optgroup>]] — лише заголовок групи пунктів, вибрати його не можна.'},
+ {q:'Якщо учень повернеться до «— оберіть гурток —», форма не відправиться.',a:true,why:'цей пункт має [[value=""]], а список — [[required]]: порожній вибір не проходить перевірку.'},
+ {q:'У цьому списку можна вибрати одразу два гуртки.',a:false,why:'для кількох виборів потрібен атрибут [[multiple]], а його тут немає.'},
+ {q:'Якщо видалити [[name="club"]], вибраний гурток не потрапить у дані форми.',a:true,why:'без [[name]] браузер не надсилає значення елемента.'},
+ {q:'Клік по написі «Гурток:» переведе фокус на список.',a:true,why:'[[for="club"]] у [[<label>]] збігається з [[id="club"]] у [[<select>]].'},
+ {q:'Якщо обрати «Шахи», на сервер піде [[club=Шахи]].',a:true,why:'коли в [[<option>]] немає [[value]], надсилається текст пункту.'}];
+
+/* 7. баг-репорт */
+const LN7=['<form action="/join.php" metod="POST">','  <fieldset>','    <legend>Запис на гурток</legend>','    <label for="u_name">Прізвище та ім’я:</label>','    <input type="text" id="u_name" name="fullname" required>','    <label for="u_mail">Пошта батьків:</label>','    <input type="mail" id="u_mail" name="email">','    <label for="u_phone">Телефон:</label>','    <input type="tel" id="phone" name="phone">','    <p>Форма занять:</p>','    <input type="radio" id="f_off" name="format" value="offline" checked>','    <label for="f_off">Очна</label>','    <input type="radio" id="f_on" name="formats" value="online">','    <label for="f_on">Онлайн</label>','    <label for="u_note">Побажання:</label>','    <textarea id="u_note" name="note" rows="3"></textarea>','    <input type="submit" id="send" val="Надіслати заявку">','    <input type="reset" id="send" value="Очистити">','  </fieldset>','</form>'];
+const BG7={0:'атрибут записано з помилкою: [[metod]] замість [[method]] — браузер його не впізнає й надішле дані методом GET.',6:'типу [[mail]] не існує — потрібно [[type="email"]], інакше браузер не перевірить адресу.',8:'[[id="phone"]] не збігається з [[for="u_phone"]] у підписі — клік по «Телефон» не активує поле.',12:'у перемикачів різні [[name]] ([[format]] і [[formats]]) — можна вибрати обидва варіанти; потрібен однаковий [[name="format"]].',16:'атрибут називається [[value]], а не [[val]] — напис на кнопці не з’явиться.',17:'[[id="send"]] повторюється (він уже є в кнопці надсилання) — [[id]] має бути унікальним.'};
+
+/* 8. пропуски */
+const CODE8=`<form action="/clubs/search" method="§1§">
+  <label for="§2§">Пошук гуртка:</label>
+  <input type="§3§" id="club_q" name="§4§"
+         placeholder="шахи, хор, волейбол…">
+
+  <label for="age">Вік:</label>
+  <input type="number" id="age" name="age" §5§="10" max="17">
+
+  <button type="§6§">Знайти</button>
+</form>`;
+const AN8={1:'get',2:'club_q',3:'search',4:'q',5:'min',6:'submit'};
+const CH8=['post','q','submit','text','get','min','club_q','reset','search','minlength','age'];
+const WH8={1:'щоб результат мав адресу на кшталт [[/clubs/search?q=шахи]], потрібен [[method="get"]] — дані дописуються до URL; [[post]] ховає їх у тілі запиту.',2:'[[for]] у [[<label>]] має збігатися з [[id]] поля — тут [[club_q]].',3:'пошукове поле — [[type="search"]] (хрестик очищення й клавіша «Пошук» на телефоні).',4:'назву параметра в адресі задає [[name]]: для [[?q=…]] потрібно [[name="q"]].',5:'найменше допустиме число задає [[min]]; [[minlength]] обмежує кількість символів у тексті.',6:'кнопка, що відправляє форму, — [[type="submit"]]; [[reset]] очищає поля.'};
+
+/* 9. ти — браузер */
+const FORM9=`<form action="/register.php" method="POST">
+  <label for="login">Логін для кабінету гуртківця:</label>
+  <input type="text" id="login" name="login" required pattern="[a-z0-9_]{4,12}">
+
+  <label for="mail">Пошта:</label>
+  <input type="email" id="mail" name="email" required>
+
+  <label for="grade">Клас:</label>
+  <input type="number" id="grade" name="grade" min="5" max="11" required>
+
+  <label for="card">Номер учнівського (необов’язково):</label>
+  <input type="text" id="card" name="card" minlength="6" maxlength="8">
+
+  <label for="phone">Телефон (необов’язково):</label>
+  <input type="tel" id="phone" name="phone" pattern="\\+380[0-9]{9}">
+
+  <input type="checkbox" id="agree" name="agree" required>
+  <label for="agree">Погоджуюсь з правилами гуртка</label>
+
+  <button type="submit">Зареєструватися</button>
+</form>`;
+const OK9={login:'olena_10',email:'olena@ukr.net',grade:'10',card:'AB1234',phone:'+380671234567',agree:true};
+const AT9=[
+ {v:{login:'Olena_10'},a:false,why:'логін містить велику літеру [[O]], а [[pattern="[a-z0-9_]{4,12}"]] дозволяє лише малі латинські літери, цифри та [[_]].'},
+ {v:{phone:''},a:true,why:'телефон необов’язковий (немає [[required]]), а порожнє поле [[pattern]] не перевіряє.'},
+ {v:{grade:'12'},a:false,why:'12 більше за [[max="11"]].'},
+ {v:{card:'AB12'},a:false,why:'введено 4 символи, а [[minlength="6"]] вимагає щонайменше 6.'},
+ {v:{},a:true,why:'усі поля відповідають умовам.'},
+ {v:{email:'olena.ukr.net'},a:false,why:'для [[type="email"]] адреса має містити [[@]].'},
+ {v:{agree:false},a:false,why:'прапорець має [[required]] — без галочки форма не відправиться.'},
+ {v:{card:''},a:true,why:'поле необов’язкове: порожнє значення [[minlength]] не перевіряє.'}];
+
+/* 10. що отримає сервер */
+const SC10=[
+ {t:'Пошук гуртка',c:`<form action="/clubs" method="GET">
+  <input type="search" id="club_q" name="q">
+  <select id="age" name="age">
+    <option value="12">12 років</option>
+    <option value="14">14 років</option>
+  </select>
+  <button type="submit">Знайти</button>
+</form>`,act:'Учень увів «шахи», обрав «14 років» і натиснув «Знайти». Яку адресу відкриє браузер?',o:['/clubs?q=шахи&age=14','/clubs?q=шахи&age=14 років','/clubs?club_q=шахи&age=14','/clubs — дані підуть у тілі запиту'],a:0,why:'[[GET]] дописує дані до адреси після [[?]]; назви параметрів — це [[name]], а значення списку — [[value]] обраного пункту.'},
+ {t:'Додаткові секції',c:`<form action="/join.php" method="POST">
+  <input type="checkbox" id="x1" name="extra" value="chess"> <label for="x1">Шахи</label>
+  <input type="checkbox" id="x2" name="extra" value="choir"> <label for="x2">Хор</label>
+  <input type="checkbox" id="x3" name="extra" value="volley"> <label for="x3">Волейбол</label>
+  <button type="submit">Надіслати</button>
+</form>`,act:'Учень позначив «Шахи» і «Хор». Які дані отримає сервер?',o:['extra=chess&extra=choir','extra=chess,choir,volley','x1=on&x2=on','extra=Шахи&extra=Хор'],a:0,why:'надсилаються лише позначені прапорці; кожен дає пару [[name=value]], тому ім’я [[extra]] повторюється.'},
+ {t:'Службові поля',c:`<form action="/join.php" method="POST">
+  <input type="text" id="school" name="school" value="Обрій" readonly>
+  <input type="text" id="code" name="code" value="777" disabled>
+  <input type="text" id="nick" placeholder="Нікнейм">
+  <input type="hidden" id="token" name="token" value="a1b2">
+  <button type="submit">Надіслати</button>
+</form>`,act:'Учень увів у поле «Нікнейм» слово «Lis» і натиснув кнопку. Які дані отримає сервер?',o:['school=Обрій&token=a1b2','school=Обрій&code=777&token=a1b2','school=Обрій&nick=Lis&token=a1b2','code=777&nick=Lis'],a:0,why:'[[readonly]] і [[hidden]] надсилаються, [[disabled]] — ні, а поле без [[name]] не надсилається взагалі.'},
+ {t:'Форма занять і згода',c:`<form action="/join.php" method="POST">
+  <input type="radio" id="f_off" name="format" value="offline" checked> <label for="f_off">Очна</label>
+  <input type="radio" id="f_on" name="format" value="online"> <label for="f_on">Онлайн</label>
+  <input type="checkbox" id="agree" name="agree"> <label for="agree">Згоден</label>
+  <button type="submit">Надіслати</button>
+</form>`,act:'Учень клацнув «Онлайн», поставив галочку «Згоден» і надіслав форму. Які дані отримає сервер?',o:['format=Онлайн&agree=on','format=online&agree=on','format=offline&format=online&agree=on','format=online&agree=true'],a:1,why:'з групи перемикачів надсилається лише [[value]] вибраного; прапорець без [[value]] передає [[on]].'}];
+
+/* 11. хотфікс */
+const FIX11=`<form action="/feedback.php" method="POST">
+  <fieldset>
+    <legend>Відгук батьків про гурток</legend>
+
+    <label for="p_name">Ім’я:</label>
+    <input type="text" id="p_name" name="parent" requird>
+
+    <label for="p_mail">Пошта:</label>
+    <input type="email" id="p_mail">
+
+    <label for="p_rate">Оцінка гуртка (від 1 до 5):</label>
+    <input type="number" id="p_rate" name="rate" min="5" max="1">
+
+    <p>Чи порадите гурток друзям?</p>
+    <input type="radio" id="r_yes" name="advise" value="yes">
+    <label for="r_yes">Так</label>
+    <input type="radio" id="r_yes" name="advise" value="no">
+    <label for="r_no">Ні</label>
+
+    <label for="p_text">Коментар:</label>
+    <textarea id="p_text" name="comment" rows="4">
+
+    <button type="button" id="p_send">Надіслати відгук</button>
+  </fieldset>
+</form>`;
+const R11=[
+ {ok:d=>{const e=byLabel(d,/Ім/);return e&&e.hasAttribute('required')&&!e.hasAttribute('requird')},bad:'Поле «Ім’я»: атрибут обов’язковості записано з помилкою ([[requird]]), тож браузер його ігнорує — потрібно [[required]].'},
+ {ok:d=>{const e=byLabel(d,/Пошта/);return typeOf(e)==='email'&&!!(e.getAttribute('name')||'').trim()},bad:'Поле «Пошта» не має [[name]] — адреса не потрапить у дані форми.'},
+ {ok:d=>{const e=byLabel(d,/Оцінка/);return e&&e.getAttribute('min')==='1'&&e.getAttribute('max')==='5'},bad:'Поле «Оцінка»: межі переплутано — має бути [[min="1"]] і [[max="5"]].'},
+ {ok:d=>{const r=$$('input[type=radio]',d);const y=byLabel(d,/^\s*Так\s*$/),n=byLabel(d,/^\s*Ні\s*$/);return r.length===2&&uniqueIds(d)&&y&&n&&y!==n&&y.value==='yes'&&n.value==='no'&&r[0].name&&r[0].name===r[1].name},bad:'Перемикачі «Так/Ні»: [[id="r_yes"]] повторюється, тому підпис «Ні» ([[for="r_no"]]) ні на що не вказує — [[id]] має бути унікальним.'},
+ {ok:(d,raw)=>{const e=byLabel(d,/Коментар/);return e&&e.tagName==='TEXTAREA'&&!/</.test(e.textContent)&&/<\/textarea\s*>/i.test(raw)},bad:'Тег [[<textarea>]] не закрито — увесь код після нього перетворився на текст усередині поля; потрібен [[</textarea>]].'},
+ {ok:d=>{const b=$$('button,input',d).find(x=>/Надіслати відгук/.test(x.textContent+(x.value||'')));return b&&b.type==='submit'},bad:'Кнопка «Надіслати відгук» має [[type="button"]] і нічого не відправляє — потрібно [[type="submit"]].'}];
+
+/* 12. фінальна форма */
+const REQ12=['[[<form>]]: [[action="/register.php"]], метод [[POST]].','Дві рамки [[<fieldset>]] із заголовками [[<legend>]]: «Дані учня» та «Вибір гуртка».','Прізвище та ім’я: [[type="text"]], [[name="fullname"]], обов’язкове, із сірим зразком-підказкою.','Пошта батьків: [[type="email"]], [[name="email"]], обов’язкове.','Клас: [[type="number"]], [[name="grade"]], від 5 до 11.','Гурток: список [[<select>]] з [[name="club"]], щонайменше 2 групи [[<optgroup>]] і 4 пункти з [[value]].','Форма занять: 2 перемикачі з [[name="format"]] (очна / онлайн), один вибрано заздалегідь.','Згода з правилами: обов’язковий прапорець, [[name="agree"]].','Кнопки надсилання ([[submit]]) і очищення ([[reset]]).','Кожен елемент форми має унікальний [[id]], кожне поле — свій [[<label for>]].'];
+const fld=(title,sel,more,moreMsg)=>({ok:d=>{const e=$(sel,d);return!!e&&!!e.id&&labelsOf(d,e).length>0&&(!more||more(e))},bad:d=>{const e=$(sel,d);if(!e)return`${title}: не знайдено елемент із потрібними [[type]] і [[name]].`;if(!e.id)return`${title}: немає атрибута [[id]].`;if(!labelsOf(d,e).length)return`${title}: немає підпису [[<label>]], у якого [[for]] збігається з [[id="${e.id}"]].`;return`${title}: ${moreMsg}`}});
+const R12=[
+ {ok:d=>{const f=$('form',d);return f&&f.getAttribute('action')==='/register.php'&&(f.getAttribute('method')||'').toUpperCase()==='POST'},bad:'Тег [[<form>]]: потрібні [[action="/register.php"]] і [[method="POST"]].'},
+ {ok:d=>{const fs=$$('fieldset',d);const lg=fs.map(f=>{const l=[...f.children].find(c=>c.tagName==='LEGEND');return l?l.textContent.trim():''});return fs.length>=2&&lg.some(t=>/Дані учня/i.test(t))&&lg.some(t=>/Вибір гуртка/i.test(t))},bad:'Потрібні дві рамки [[<fieldset>]], у кожної свій [[<legend>]]: «Дані учня» та «Вибір гуртка».'},
+ fld('Прізвище та ім’я','input[type=text][name=fullname]',e=>e.hasAttribute('required')&&!!(e.getAttribute('placeholder')||'').trim(),'потрібні атрибути [[required]] і [[placeholder]].'),
+ fld('Пошта батьків','input[type=email][name=email]',e=>e.hasAttribute('required'),'поле має бути обов’язковим ([[required]]).'),
+ fld('Клас','input[type=number][name=grade]',e=>e.getAttribute('min')==='5'&&e.getAttribute('max')==='11','межі задають [[min="5"]] і [[max="11"]].'),
+ fld('Гурток','select[name=club]',e=>$$('optgroup',e).length>=2&&$$('option',e).filter(o=>(o.getAttribute('value')||'').trim()).length>=4,'потрібно щонайменше 2 групи [[<optgroup>]] і 4 пункти [[<option>]] із непорожнім [[value]].'),
+ {ok:d=>{const r=$$('input[type=radio][name=format]',d);return r.length>=2&&r.every(x=>x.id&&labelsOf(d,x).length&&(x.getAttribute('value')||'').trim())&&r.filter(x=>x.hasAttribute('checked')).length===1},bad:'Форма занять: потрібні 2 перемикачі з [[name="format"]], у кожного свої [[id]], [[value]] і [[<label>]], рівно один — [[checked]].'},
+ fld('Згода','input[type=checkbox][name=agree]',e=>e.hasAttribute('required'),'прапорець має бути обов’язковим ([[required]]).'),
+ {ok:d=>{const b=$$('button,input',d);return b.some(x=>x.type==='submit')&&b.some(x=>x.type==='reset')},bad:'Потрібні дві кнопки: надсилання ([[submit]]) і очищення ([[reset]]).'},
+ {ok:d=>{const e=$$('input,select,textarea,button',d);return e.length>0&&uniqueIds(d)&&e.every(x=>x.id)},bad:'Кожен елемент форми ([[input]], [[select]], [[textarea]], [[button]]) повинен мати власний [[id]], і жоден [[id]] не може повторюватися.'},
+ {ok:(d,raw)=>!!raw.trim()&&!closed(raw).length&&!$$('[val]',d).length,bad:(d,raw)=>{const c=closed(raw);return(c.length?`Не закрито парні теги: ${c.map(t=>`[[</${t}>]]`).join(', ')}. `:'')+($$('[val]',d).length?'Атрибут називається [[value]], а не [[val]].':'')||'Форма порожня.'}}];
+
+/* блоки макета сайту, що з’являються після перевірки тікетів */
+const MK=[
+ '<h3 style="margin:0 0 2px;font-size:17px">Онлайн-запис на гуртки 2026/2027</h3><p style="margin:0;color:#5b6478;font-size:12.5px">Заповніть форму — керівник гуртка зв’яжеться з вами протягом тижня.</p>',
+ '<div class="two"><div><label>Прізвище та ім’я</label><input placeholder="Петренко Іван"></div><div><label>Дата народження</label><input type="date"></div></div>',
+ '<div class="two"><div><label>Пошта батьків</label><input type="email" placeholder="mama@ukr.net"></div><div><label>Телефон</label><input type="tel" placeholder="+380…"></div></div>',
+ '<div class="two"><div><label>Клас</label><input type="number" min="5" max="11" value="10"></div><div><label>Час занять</label><input type="time" value="15:30"></div></div>',
+ '<div class="two"><div><label>Заклад</label><input value="Ліцей «Обрій»" readonly style="background:#eef1f6"></div><div><span class="lb">Форма занять</span><div class="inl"><span><input type="radio" name="mkf" checked> <label>Очна</label></span><span><input type="radio" name="mkf"> <label>Онлайн</label></span></div></div></div>',
+ '<label>Гурток</label><select><option>Веб-дизайн</option><optgroup label="ІТ"><option>Робототехніка</option><option>Веб-дизайн</option></optgroup><optgroup label="Спорт"><option>Волейбол</option><option>Шахи</option></optgroup></select>',
+ '<label>Побажання</label><textarea rows="2" placeholder="Що хочеш навчитися робити?"></textarea>',
+ '<label>🔎 Пошук гуртка</label><input type="search" placeholder="шахи, хор, волейбол…">',
+ '<div class="two"><div><label>Логін для кабінету</label><input placeholder="olena_10"></div><div><label>Номер учнівського</label><input placeholder="AB1234"></div></div>',
+ '<span class="lb">Додаткові секції</span><div class="inl"><span><input type="checkbox" checked> <label>Шахи</label></span><span><input type="checkbox" checked> <label>Хор</label></span><span><input type="checkbox"> <label>Волейбол</label></span></div>',
+ '<span class="lb">Відгук батьків</span><div class="inl"><span>Оцінка: <b style="color:#f59e0b">★★★★★</b></span><span><input type="radio" name="mka" checked> <label>Порадимо друзям</label></span></div>',
+ '<div class="inl" style="margin-bottom:8px"><span><input type="checkbox" checked> <label>Погоджуюсь з правилами гуртка</label></span></div><div class="btns"><span>Надіслати заявку</span><span>Очистити</span></div><p style="margin:10px 0 0;color:#0b8a5f;font-weight:700">✅ Форму прийнято замовником</p>'];
+const MKORD=[0,7,1,2,3,4,5,9,8,6,10,11];
+
+/* ================= завдання (тікети) ================= */
+let PICK=null,JUST=0,RO=null;
+const T=[
+/* ---------- Спринт 1 · Стажер ---------- */
+{id:'ВК-101',sp:0,who:'lead',kind:'Тест',title:'Онбординг: перевірка знань стеку',
+ msg:'<p>Вітаю в команді! Перш ніж допустити до коду замовника, перевіряю базу: як влаштована форма, куди й як вона надсилає дані.</p><p>Оберіть відповідь у кожному питанні. Там, де позначено, правильних варіантів кілька.</p>',
+ init:()=>({}),
+ view(st){return`<div class="qs">${QS.map((q,i)=>`<div class="q"><h4>${i+1}. ${fmt(q.q)}</h4>${q.multi?'<small>Кілька правильних відповідей</small>':''}${q.o.map((o,j)=>{const on=q.multi?(st[i]||[]).includes(j):st[i]===j;return`<label class="opt"><input type="${q.multi?'checkbox':'radio'}" name="q${i}" data-q="${i}" data-o="${j}" ${on?'checked':''}><span>${fmt(o)}</span></label>`}).join('')}</div>`).join('')}</div>`},
+ bind(st){$$('[data-q]').forEach(x=>x.onchange=()=>{const q=+x.dataset.q,o=+x.dataset.o;if(QS[q].multi){const s=new Set(st[q]||[]);x.checked?s.add(o):s.delete(o);st[q]=[...s]}else st[q]=o;save()})},
+ grade(st){let ok=0;const err=[];QS.forEach((q,i)=>{const v=st[i];const empty=v===undefined||(q.multi&&!v.length);const good=q.multi?!empty&&[...v].sort().join()===q.a.join():v===q.a[0];if(good)ok++;else err.push(`Питання ${i+1}: ${empty?'відповіді немає':'відповідь неправильна'} — ${q.e}`)});return{ok,tot:QS.length,err}}},
+
+{id:'ВК-102',sp:0,who:'pm',kind:'З’єднання лініями',title:'Специфікація полів анкети',
+ msg:'<p>Замовник надіслав перелік даних, які має збирати форма. Для кожного пункту оберіть найкращий <code>type</code> поля <code>&lt;input&gt;</code> — такий, щоб браузер сам допомагав учневі (календар, цифрова клавіатура, палітра).</p><p>Протягніть лінію від опису до типу або натисніть спершу опис, а потім тип. Повторне натискання на опис прибирає лінію. Деякі типи зайві.</p>',
+ init:()=>({}),
+ view(st){return`<div class="wires" id="wires"><svg aria-hidden="true"></svg><div class="col"><h4>Дані з ТЗ</h4>${L2.map((l,i)=>`<button type="button" class="node l ${PICK==='l'+i?'pick':''} ${st[i]!==undefined?'linked':''}" id="nl${i}" data-n="l${i}">${esc(l[0])}</button>`).join('')}</div><div class="col"><h4>Тип поля</h4>${R2.map(r=>`<button type="button" class="node r ${PICK==='r'+r?'pick':''} ${Object.values(st).includes(r)?'linked':''}" id="nr${r}" data-n="r${r}">type="${r}"</button>`).join('')}</div></div>`},
+ bind(st){bindWires(st)},
+ grade(st){let ok=0;const err=[];L2.forEach(([t,a],i)=>{const g=st[i];if(g===a)ok++;else err.push(`«${t}»: ${g?`обрано [[type="${g}"]] (${TYD[g]})`:'з’єднання немає'}, а потрібно [[type="${a}"]] — ${TYD[a]}.`)});return{ok,tot:L2.length,err}}},
+
+{id:'ВК-103',sp:0,who:'lead',kind:'Групування',title:'Бібліотека компонентів студії',
+ msg:'<p>У нашій дизайн-системі всі типи <code>&lt;input&gt;</code> розкладено за категоріями — так дизайнерам і верстальникам легше домовлятися. Розкладіть картки по групах.</p><p>Перетягніть картку в групу або натисніть картку, а потім групу.</p>',
+ init:()=>({}),
+ view(st){const ch=Object.keys(CH3);const chip=c=>`<button type="button" class="chip ${PICK===c?'pick':''}" data-chip="${c}">${c}</button>`;const left=ch.filter(c=>!st[c]);
+  return`<div class="${PICK?'has-pick':''}"><div class="pool" data-drop="">${left.map(chip).join('')||'<span class="muted">Усі картки розкладено.</span>'}</div><div class="buckets">${BK3.map(b=>`<div class="bucket" data-drop="${b[0]}"><h4>${b[1]}</h4><div class="in">${ch.filter(c=>st[c]===b[0]).map(chip).join('')}</div></div>`).join('')}</div></div>`},
+ bind(st){bindChips((c,b)=>{if(b)st[c]=b;else delete st[c]})},
+ grade(st){let ok=0;const err=[];const nm=k=>(BK3.find(b=>b[0]===k)||['',''])[1].replace(/^\S+\s/,'');Object.entries(CH3).forEach(([c,g])=>{if(st[c]===g)ok++;else err.push(`[[${c}]] (${TYD[c]}) належить до групи «${nm(g)}»${st[c]?`, а розміщено в «${nm(st[c])}»`:', але картку не розкладено'}.`)});return{ok,tot:Object.keys(CH3).length,err}}},
+
+{id:'ВК-104',sp:0,who:'lead',kind:'Встанови порядок',title:'Каркас форми запису',
+ msg:'<p>Я накидав каркас форми, але рядки перемішалися під час злиття гілок. Зберіть їх у правильному порядку: дві групи полів у рамках, у кожної свій заголовок, підписи — перед своїми полями, кнопка — після груп.</p><p>Перетягуйте рядки (на телефоні — за значок ⠿) або користуйтеся стрілками.</p>',
+ init:()=>[...ST4],
+ view(st){let dep=0;return`<div class="lines">${st.map((k,i)=>{const s=LN4[k];if(k==='xf'||k.startsWith('xfs'))dep=Math.max(0,dep-1);const pad=dep;if(k==='f'||k.startsWith('fs'))dep++;
+  return`<div class="oline" data-l="${i}"><span class="grip" aria-hidden="true">⠿</span><pre class="hlc" style="padding-left:${pad*16}px">${hl(s)}</pre><button type="button" class="mv" data-up="${i}" aria-label="Вище" ${i?'':'disabled'}>↑</button><button type="button" class="mv" data-dn="${i}" aria-label="Нижче" ${i<st.length-1?'':'disabled'}>↓</button></div>`}).join('')}</div>`},
+ bind(st){bindOrder(st)},
+ grade(st){const s=st.map(k=>LN4[k]),n=s.length,ix=k=>st.indexOf(k),isF=x=>x==='<fieldset>',isX=x=>x==='</fieldset>';
+  let d=0,nest=true;s.forEach(x=>{if(isF(x)){d++;if(d>1)nest=false}if(isX(x)){d--;if(d<0)nest=false}});nest=nest&&d===0;
+  const grp=(lg,items)=>{const i=ix(lg);let j=i+1;while(j<n&&!isX(s[j])&&!isF(s[j]))j++;return items.every(k=>ix(k)>i&&ix(k)<j)};
+  const lastX=Math.max(ix('xfs1'),ix('xfs2'));
+  const R=[[st[0]==='f'&&st[n-1]==='xf','Тег [[<form>]] має відкривати весь код, а [[</form>]] — закривати його.'],
+   [['lg1','lg2'].every(k=>isF(s[ix(k)-1])),'Кожен [[<legend>]] має стояти одразу після свого [[<fieldset>]].'],
+   [nest,'Рамки [[<fieldset>]] відкрито й закрито неправильно: кожна має закритися [[</fieldset>]] до початку наступної.'],
+   [[['l1','i1'],['l2','i2'],['l3','i3']].every(([a,b])=>ix(a)+1===ix(b)),'Кожен [[<label>]] має стояти безпосередньо перед полем, чий [[id]] збігається з його [[for]].'],
+   [grp('lg1',['l1','i1','l2','i2'])&&grp('lg2',['l3','i3']),'Поля потрапили не в ті групи: ПІБ і клас — у «Дані учня», список гуртків — у «Вибір гуртка».'],
+   [ix('b')>lastX&&ix('b')<ix('xf'),'Кнопка надсилання має стояти після обох груп полів, але ще всередині [[<form>]].']];
+  return{ok:R.filter(r=>r[0]).length,tot:R.length,err:R.filter(r=>!r[0]).map(r=>r[1]),unit:'порушених правил'}}},
+
+/* ---------- Спринт 2 · Junior ---------- */
+{id:'ВК-201',sp:1,who:'pm',kind:'Вибір зі списку',title:'Поведінка полів за побажаннями замовника',
+ msg:'<p>Ганна Петрівна переглянула прототип і надіслала список побажань. Для кожної ситуації оберіть у коді атрибут, який дає саме таку поведінку. Кожен атрибут потрібен рівно один раз.</p>',
+ init:()=>({}),
+ view(st){return RW5.map((r,k)=>`<div class="sit"><p>${k+1}. ${esc(r.q)}</p><code class="cline">${hl(r.pre)} <select class="asel" data-k="${k}" aria-label="Атрибут для ситуації ${k+1}"><option value="">— атрибут —</option>${ORD5.map(i=>`<option value="${i}" ${st[k]===i?'selected':''}>${esc(AT5[i])}</option>`).join('')}</select>${hl(r.post)}</code></div>`).join('')},
+ bind(st){$$('select.asel').forEach(s=>s.onchange=()=>{const k=+s.dataset.k;if(s.value==='')delete st[k];else st[k]=+s.value;save()})},
+ grade(st){let ok=0;const err=[];RW5.forEach((r,k)=>{if(st[k]===r.a)ok++;else err.push(`Ситуація ${k+1}: ${st[k]===undefined?'атрибут не вибрано':`атрибут [[${AT5[st[k]].split('=')[0]}]] тут не підходить`} — ${r.why}`)});return{ok,tot:RW5.length,err}}},
+
+{id:'ВК-202',sp:1,who:'lead',kind:'Так / Ні',title:'Code review (перевірка коду): список гуртків',
+ msg:'<p>Перевір, будь ласка, мій список гуртків перед злиттям у головну гілку. Оціни кожне твердження про поведінку цього коду: правда чи ні?</p>',
+ init:()=>({}),
+ view(st){return code(SEL6)+ST6.map((x,i)=>`<div class="tf"><span>${i+1}. ${fmt(x.q)}</span><div class="bb">${[[true,'Так'],[false,'Ні']].map(([v,t])=>`<button type="button" class="yn ${st[i]===v?'on':''}" data-i="${i}" data-v="${v}">${t}</button>`).join('')}</div></div>`).join('')},
+ bind(st){$$('[data-v]').forEach(b=>b.onclick=()=>{st[+b.dataset.i]=b.dataset.v==='true';save();rer()})},
+ grade(st){let ok=0;const err=[];ST6.forEach((x,i)=>{if(st[i]===x.a)ok++;else err.push(`Твердження ${i+1} («${plain(x.q)}»): ${st[i]===undefined?'відповіді немає':'оцінено неправильно'} — ${x.why}`)});return{ok,tot:ST6.length,err}}},
+
+{id:'ВК-203',sp:1,who:'qa',kind:'Знайди помилки',title:'Баг-репорт: форма «працює дивно»',
+ msg:'<p>Я протестувала форму запису — батьки скаржаться, що вона «працює дивно». У коді рівно <b>6 помилок</b>. Знайдіть рядки з ними й натисніть на них (повторне натискання знімає позначку).</p><p>Увага: хибні позначки зменшують результат.</p>',
+ init:()=>[],
+ view(st){return`<div class="blines">${LN7.map((l,i)=>`<button type="button" class="cl hlc ${st.includes(i)?'sel':''}" data-l="${i}"><span class="n">${i+1}</span><span>${hl(l)}</span></button>`).join('')}</div>`},
+ bind(st){$$('.cl[data-l]').forEach(r=>r.onclick=()=>{const i=+r.dataset.l,k=st.indexOf(i);if(k>=0)st.splice(k,1);else st.push(i);save();rer()})},
+ grade(st){const B=Object.keys(BG7).map(Number);const found=st.filter(i=>B.includes(i)),extra=st.filter(i=>!B.includes(i));
+  const err=[...B.filter(i=>!st.includes(i)).map(i=>`Не знайдено помилку в рядку ${i+1}: ${BG7[i]}`),...extra.map(i=>`Рядок ${i+1} позначено помилково — там усе записано правильно.`)];
+  return{ok:Math.max(0,found.length-extra.length),tot:B.length,err,unit:'помилок у звіті'}}},
+
+{id:'ВК-204',sp:1,who:'lead',kind:'Заповни пропуски',title:'Пошук гуртків на сайті ліцею',
+ msg:'<p>Потрібна маленька форма пошуку. Вимоги:</p><ul><li>сторінка результатів має адресу на кшталт <code>/clubs/search?q=шахи&amp;age=14</code> — нею можна поділитися;</li><li>клік по написі «Пошук гуртка» ставить курсор у поле;</li><li>поле саме пошукове (хрестик очищення, клавіша «Пошук» на телефоні);</li><li>в адресі запит називається <code>q</code>;</li><li>вік — не менше 10;</li><li>кнопка відправляє форму.</li></ul><p>Перетягніть картки в пропуски або натисніть картку — вона стане в перший вільний пропуск. Деякі картки зайві.</p>',
+ init:()=>({}),
+ view(st){const used=Object.values(st);const pool=CH8.filter(c=>!used.includes(c));const chip=c=>`<button type="button" class="chip" data-chip="${c}">${c}</button>`;
+  const html=hl(CODE8).replace(/§(\d)§/g,(m,i)=>`<span class="bl" data-drop="${i}">${st[i]?chip(st[i]):'•••'}</span>`);
+  return`<div class="pool" data-drop="pool">${pool.map(chip).join('')||'<span class="muted">Усі картки використано.</span>'}</div><pre class="code hlc" style="white-space:pre-wrap">${html}</pre>`},
+ bind(st){const from=c=>Object.keys(st).find(k=>st[k]===c);
+  bindChips((c,slot)=>{const f=from(c);if(!slot||slot==='pool'){if(f)delete st[f];return}const prev=st[slot];st[slot]=c;if(f&&f!==slot){if(prev)st[f]=prev;else delete st[f]}},
+   c=>{const f=from(c);if(f)delete st[f];else{const e=[1,2,3,4,5,6].find(k=>!st[k]);if(e)st[e]=c}})},
+ grade(st){let ok=0;const err=[];Object.entries(AN8).forEach(([i,a])=>{if(st[i]===a)ok++;else err.push(`Пропуск ${i}: ${st[i]?`[[${st[i]}]] не підходить`:'порожній'} — ${WH8[i]}`)});return{ok,tot:6,err}}},
+
+/* ---------- Спринт 3 · Middle ---------- */
+{id:'ВК-301',sp:2,who:'qa',kind:'Симуляція: ти — браузер',title:'Ручне тестування валідації',
+ msg:'<p>Перед релізом проганяю тест-кейси. Уявіть, що ви — браузер: перевірте кожну спробу реєстрації за атрибутами форми. Чи пропустить браузер форму?</p><p>У кожній спробі змінене поле виділено кольором, решта полів заповнені правильно.</p>',
+ init:()=>({}),
+ view(st){return code(FORM9)+`<div class="cards">${AT9.map((x,i)=>{const v={...OK9,...x.v};const d=k=>k in x.v?' class="diff"':'';
+  return`<div class="att"><h4>Спроба ${i+1}</h4><div class="kv"><b>Логін</b><code${d('login')}>${esc(v.login)}</code><b>Пошта</b><code${d('email')}>${esc(v.email)}</code><b>Клас</b><code${d('grade')}>${esc(v.grade)}</code><b>Учнівський</b>${v.card?`<code${d('card')}>${esc(v.card)}</code>`:`<span${d('card')}>порожньо</span>`}<b>Телефон</b>${v.phone?`<code${d('phone')}>${esc(v.phone)}</code>`:`<span${d('phone')}>порожньо</span>`}<b>Згода</b><span${d('agree')}>${v.agree?'☑ стоїть':'☐ не стоїть'}</span></div>
+  <div class="bb">${[[true,'✔ Відправиться'],[false,'✖ Ні']].map(([val,t])=>`<button type="button" class="yn ${st[i]===val?'on':''}" data-i="${i}" data-v="${val}">${t}</button>`).join('')}</div></div>`}).join('')}</div>`},
+ bind(st){$$('[data-v]').forEach(b=>b.onclick=()=>{st[+b.dataset.i]=b.dataset.v==='true';save();rer()})},
+ grade(st){let ok=0;const err=[];AT9.forEach((x,i)=>{if(st[i]===x.a)ok++;else err.push(`Спроба ${i+1}: ${st[i]===undefined?'відповіді немає':(x.a?'форма відправиться':'форма не відправиться')} — ${x.why}`)});return{ok,tot:AT9.length,err}}},
+
+{id:'ВК-302',sp:2,who:'lead',kind:'Симуляція: дані на сервер',title:'Що отримає сервер?',
+ msg:'<p>Бекенд-розробник (backend — серверна частина) питає, у якому вигляді приходитимуть дані. Для кожного фрагмента форми оберіть, що саме отримає сервер.</p>',
+ init:()=>({}),
+ view(st){return SC10.map((s,i)=>`<div class="scn"><h4>${i+1}. ${esc(s.t)}</h4>${code(s.c)}<p class="act">${esc(s.act)}</p>${s.o.map((o,j)=>`<label class="opt"><input type="radio" name="s${i}" data-s="${i}" data-o="${j}" ${st[i]===j?'checked':''}><span>${esc(o)}</span></label>`).join('')}</div>`).join('')},
+ bind(st){$$('[data-s]').forEach(x=>x.onchange=()=>{st[+x.dataset.s]=+x.dataset.o;save()})},
+ grade(st){let ok=0;const err=[];SC10.forEach((s,i)=>{if(st[i]===s.a)ok++;else err.push(`«${s.t}»: ${st[i]===undefined?'відповіді немає':`обрано [[${s.o[st[i]]}]]`} — ${s.why}`)});return{ok,tot:SC10.length,err}}},
+
+{id:'ВК-303',sp:2,who:'qa',kind:'Виправ код',title:'Хотфікс (термінове виправлення): відгук батьків',
+ msg:'<p>Терміново! Форма відгуку батьків уже на сайті, але працює неправильно: я знайшла <b>6 проблем</b>. Виправте код просто в редакторі — у вікні браузера праворуч одразу видно результат.</p><p>Підказка від QA: клацайте по підписах у вікні браузера й спробуйте вибрати обидва перемикачі.</p>',
+ init:()=>FIX11,
+ view(st){return`<div class="two">${editor('e11',st,'feedback.html')}${preview('e11')}</div>`},
+ bind(st,i){bindEd('e11',()=>S.t[i].a,v=>{S.t[i].a=v})},
+ grade(st){return ruleGrade(R11,st)}},
+
+{id:'ВК-304',sp:2,who:'client',kind:'Напиши код',title:'Фінальний реліз: форма запису на гуртки',
+ msg:'<p>Шановна командо! Настав час головного — повної форми запису. Нижче технічне завдання. Чекаю на результат!</p>',
+ init:()=>'<!-- Напишіть форму тут. Вимоги — у технічному завданні вище. -->\n',
+ view(st){return`<ol class="req">${REQ12.map(x=>`<li>${fmt(x)}</li>`).join('')}</ol><div class="two">${editor('e12',st,'register.html')}${preview('e12')}</div>`},
+ bind(st,i){bindEd('e12',()=>S.t[i].a,v=>{S.t[i].a=v})},
+ grade(st){return ruleGrade(R12,st)}}];
+
+/* ================= стан ================= */
+let S=null;
+const fresh=()=>({me:{sn:'',fn:'',cl:''},lvl:0,scr:'start',cur:0,seen:[],final:false,t:T.map(t=>({a:t.init(),att:0,best:null,skip:false,fb:null}))});
+try{S=JSON.parse(localStorage.getItem(SAVE))}catch(e){}
+if(!S||!S.t||S.t.length!==T.length)S=null;
+function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
+const closedT=i=>{const t=S.t[i];return t.att>=MAXATT||(t.best&&t.best.p===1)};
+const open=i=>T[i].sp<=S.lvl;
+function sprintInfo(k){const ids=T.map((t,i)=>i).filter(i=>T[i].sp===k);return{ids,checked:ids.filter(i=>S.t[i].att>0).length,P:ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),need:ids.length*(PROMO[k]||1),max:ids.length,canImprove:ids.some(i=>!closedT(i))}}
+function totals(){const cap=LV[S.lvl].cap;const ids=T.map((t,i)=>i).filter(open);const P=ids.reduce((a,i)=>a+(S.t[i].best?S.t[i].best.p:0),0),M=ids.length,pcx=M?P/M*100:0;const g12=TH.find(t=>pcx>=t[0]-1e-9)[1];return{P,M,pc:Math.round(pcx),g12,g:Math.max(1,Math.round(g12*cap/12)),cap,ids}}
+function errList(){const out=[];totals().ids.forEach(i=>{const t=S.t[i],h=`${T[i].id} «${T[i].title}»`;if(!t.att)out.push(`${h}: тікет не виконано (пропущено).`);else(t.best.err||[]).forEach(e=>out.push(`${h}: ${e}`))});return out}
+
+/* ================= перетягування ================= */
+function drag(e,el,{move,drop,ghost=true}){if(e.button)return;const sx=e.clientX,sy=e.clientY;let on=false,g=null;
+ const mv=ev=>{if(!on&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>6){on=true;el.classList.add('lift');if(ghost){g=el.cloneNode(true);g.classList.add('dghost');g.removeAttribute('id');g.style.width=el.offsetWidth+'px';document.body.append(g)}}
+  if(on){ev.preventDefault();if(g)g.style.transform=`translate(${ev.clientX-el.offsetWidth/2}px,${ev.clientY-18}px)`;move&&move(ev.clientX,ev.clientY)}};
+ const up=ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);if(on){JUST=Date.now();g&&g.remove();el.classList.remove('lift');if(ev.type==='pointerup')drop(ev.clientX,ev.clientY);else rer()}};
+ addEventListener('pointermove',mv,{passive:false});addEventListener('pointerup',up);addEventListener('pointercancel',up)}
+const hover=()=>{let last=null;return(a,b)=>{const d=document.elementFromPoint(a,b)?.closest('[data-drop]');if(d!==last){last&&last.classList.remove('over');d&&d.classList.add('over');last=d}}};
+function bindChips(put,tap){const done=()=>{PICK=null;save();rer()};
+ $$('[data-chip]').forEach(x=>{const c=x.dataset.chip;
+  x.onclick=e=>{e.stopPropagation();if(Date.now()-JUST<350)return;if(tap){tap(c);done()}else{PICK=PICK===c?null:c;rer()}};
+  x.onpointerdown=e=>drag(e,x,{move:hover(),drop(a,b){const d=document.elementFromPoint(a,b)?.closest('[data-drop]');if(d){put(c,d.dataset.drop);done()}else rer()}})});
+ if(!tap)$$('[data-drop]').forEach(d=>d.onclick=()=>{if(PICK){put(PICK,d.dataset.drop);done()}})}
+function bindOrder(st){const mv=(i,to)=>{const[x]=st.splice(i,1);st.splice(to,0,x);save();rer()};
+ $$('[data-up]').forEach(b=>b.onclick=()=>mv(+b.dataset.up,+b.dataset.up-1));$$('[data-dn]').forEach(b=>b.onclick=()=>mv(+b.dataset.dn,+b.dataset.dn+1));
+ const L=$$('.oline');L.forEach((l,i)=>l.onpointerdown=e=>{if(e.target.closest('.mv'))return;if(e.pointerType!=='mouse'&&!e.target.closest('.grip'))return;e.preventDefault();let to=i;
+  drag(e,l,{move(x,y){to=L.length;for(let k=0;k<L.length;k++){const r=L[k].getBoundingClientRect();if(y<r.top+r.height/2){to=k;break}}L.forEach(n=>n.classList.remove('mk','mkb'));if(to<L.length)L[to].classList.add('mk');else L[L.length-1].classList.add('mkb')},drop(){mv(i,to>i?to-1:to)}})})}
+function bindWires(st){const box=$('#wires'),svg=$('svg',box);
+ const pt=(el,side)=>{const a=el.getBoundingClientRect(),b=box.getBoundingClientRect();return[(side==='l'?a.right:a.left)-b.left,a.top+a.height/2-b.top]};
+ const cur=(p,q)=>`M${p[0]} ${p[1]}C${p[0]+50} ${p[1]},${q[0]-50} ${q[1]},${q[0]} ${q[1]}`;
+ const lines=(x='')=>{svg.innerHTML=Object.entries(st).map(([i,j])=>{const a=$('#nl'+i),b=$('#nr'+j);return a&&b?`<path class="wire" d="${cur(pt(a,'l'),pt(b,'r'))}"/>`:''}).join('')+x};
+ lines();RO=new ResizeObserver(()=>{if(box.isConnected)lines()});RO.observe(box);
+ const link=(i,j)=>{for(const k in st)if(st[k]===j)delete st[k];st[i]=j;PICK=null;save();rer()};
+ $$('[data-n]',box).forEach(n=>{const id=n.dataset.n,side=id[0],k=id.slice(1);
+  n.onclick=()=>{if(Date.now()-JUST<350)return;if(PICK===id){if(side==='l'&&st[k]!==undefined){delete st[k];save()}PICK=null}else if(PICK&&PICK[0]!==side){side==='l'?link(k,PICK.slice(1)):link(PICK.slice(1),k);return}else if(!PICK&&side==='l'&&st[k]!==undefined){delete st[k];save();PICK=id}else PICK=id;rer()};
+  n.onpointerdown=e=>drag(e,n,{ghost:false,move(a,b){const r=box.getBoundingClientRect(),q=[a-r.left,b-r.top],p=pt(n,side);lines(`<path class="wire tmp" d="${side==='l'?cur(p,q):cur(q,p)}"/>`)},drop(a,b){const t=document.elementFromPoint(a,b)?.closest('[data-n]');if(t&&t.dataset.n[0]!==side){const m=t.dataset.n.slice(1);side==='l'?link(k,m):link(m,k)}else rer()}})})}
+
+/* ================= редактор коду ================= */
+const SNIP=[['Tab','  '],['<','<'],['>','>'],['/','/'],['=""','="|"'],['<label>','<label for="|"></label>'],['<input>','<input type="|" id="" name="">'],['<select>','<select id="|" name="">\n</select>'],['<optgroup>','<optgroup label="|">\n</optgroup>'],['<option>','<option value="|"></option>'],['<fieldset>','<fieldset>\n  <legend>|</legend>\n</fieldset>'],['<textarea>','<textarea id="|" name="" rows="3"></textarea>'],['<button>','<button type="|" id=""></button>'],['required',' required'],['checked',' checked'],['placeholder',' placeholder="|"']];
+const editor=(id,c,fn)=>`<div class="ide"><div class="ide-top"><span class="d"><i></i><i></i><i></i></span><span class="fn">${fn}</span><span class="ln" id="pos-${id}">Рядок 1</span></div><div class="kb" aria-label="Швидке введення">${SNIP.map((s,i)=>`<button type="button" data-sn="${i}" data-for="${id}">${esc(s[0])}</button>`).join('')}</div><div class="ed"><div class="edin"><pre class="gut" aria-hidden="true" id="g-${id}"></pre><div class="cell"><pre class="hlc" aria-hidden="true" id="h-${id}"></pre><textarea id="${id}" spellcheck="false" wrap="off" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Редактор HTML-коду">${esc(c)}</textarea></div></div></div></div>`;
+const preview=id=>`<div class="brw pv"><div class="bar"><i></i><i></i><i></i><span class="url">obrii.example/zapys — попередній перегляд</span></div><iframe id="pv-${id}" sandbox="allow-same-origin" title="Попередній перегляд форми"></iframe></div>`;
+const PVCSS='<style>body{font:15px/1.45 Arial,sans-serif;color:#1d2433;margin:12px;background:#fff}label{display:inline-block;margin:6px 6px 2px 0;font-weight:700}input:not([type=radio]):not([type=checkbox]),select,textarea{display:block;margin-bottom:6px;max-width:100%}input[type=radio]+label,input[type=checkbox]+label{font-weight:400}fieldset{border:1px solid #9aa5c0;border-radius:8px;margin:0 0 10px}legend{font-weight:700;color:#0f4c81}p{margin:6px 0 2px;font-weight:700}</style>';
+function paint(id,c){const f=$('#pv-'+id);if(!f)return;f.onload=()=>{try{f.style.height=Math.max(200,Math.min(700,f.contentDocument.documentElement.scrollHeight+6))+'px'}catch(e){}};f.srcdoc='<!doctype html><meta charset="utf-8">'+PVCSS+c}
+function bindEd(id,get,set){const ta=$('#'+id),h=$('#h-'+id),g=$('#g-'+id),pos=$('#pos-'+id);let tm,escK=false;
+ const sync=()=>{const v=ta.value;h.innerHTML=hl(v)+'\n';g.textContent=v.split('\n').map((x,i)=>i+1).join('\n')+'\n'};
+ const where=()=>{const p=ta.value.slice(0,ta.selectionStart).split('\n');pos.textContent=`Рядок ${p.length}, символ ${p[p.length-1].length+1}`};
+ sync();paint(id,get());
+ ta.addEventListener('input',()=>{set(ta.value);sync();clearTimeout(tm);tm=setTimeout(()=>{paint(id,ta.value);save()},300)});
+ ta.addEventListener('keyup',where);ta.addEventListener('click',where);
+ ta.addEventListener('keydown',e=>{if(e.key==='Escape'){escK=true;return}if(e.key==='Tab'&&!escK&&!e.shiftKey){e.preventDefault();ta.setRangeText('  ',ta.selectionStart,ta.selectionEnd,'end');ta.dispatchEvent(new Event('input'))}escK=false});
+ $$(`[data-for="${id}"]`).forEach(b=>{b.onpointerdown=e=>e.preventDefault();b.onclick=()=>{const s=SNIP[+b.dataset.sn][1],k=s.indexOf('|'),txt=s.replace('|',''),st=ta.selectionStart;ta.focus();ta.setRangeText(txt,st,ta.selectionEnd,'end');if(k>=0)ta.setSelectionRange(st+k,st+k);ta.dispatchEvent(new Event('input'));where()}})}
+
+/* ================= модальне вікно ================= */
+function modal(html,btns){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}<div class="mb">${btns.map((b,i)=>`<button type="button" class="btn ${b.c||''}" data-mb="${i}">${b.t}</button>`).join('')}</div></div>`;document.body.append(o);
+ $$('[data-mb]',o).forEach(x=>x.onclick=()=>{o.remove();const f=btns[+x.dataset.mb].f;f&&f()});setTimeout(()=>$('[data-mb]',o)?.focus(),30)}
+
+/* ================= екрани ================= */
+const lvBadge=k=>`<span class="lv" style="color:${LV[k].c}">${k===0?'🎓':k===1?'⚡':'🚀'} ${LV[k].n}</span>`;
+const avatar=w=>`<span class="av" style="background:${WHO[w].c}22;border-color:${WHO[w].c}">${WHO[w].e}</span>`;
+const initials=()=>((S.me.sn[0]||'')+(S.me.fn[0]||'')).toUpperCase();
+function topbar(){const n=S.t.filter(t=>t.att>0).length;
+ $('#top').innerHTML=`<div class="top"><div class="wrap"><div class="logo"><b>⚒</b><span>ВебКузня<small>веб-студія · замовлення ліцею «Обрій»</small></span></div>${S.scr==='start'?'':`<div class="prog">Прогрес<div class="pbar"><i style="width:${n/T.length*100}%"></i></div>${n} з ${T.length}</div><div class="me"><span class="av">${esc(initials())}</span><span class="nm">${esc(S.me.sn)} ${esc(S.me.fn)}</span>${lvBadge(S.lvl)}</div>`}</div></div>`}
+function go(scr,cur){S.scr=scr;if(cur!==undefined)S.cur=cur;PICK=null;save();draw();scrollTo(0,0)}
+function draw(){if(RO){RO.disconnect();RO=null}topbar();({start:drawStart,board:drawBoard,ticket:drawTicket,sum:drawSum})[S.scr]();if((S.scr==='board'||S.scr==='ticket')&&stuck())setTimeout(endModal,300)}
+
+function drawStart(){const has=S.me.sn&&S.t.some(t=>t.att>0||t.skip);
+ $('#stage').innerHTML=`<div class="hero"><section class="card"><div class="kick">&lt;form action="/vebkuznia/internship"&gt;</div><h1>Стажування у веб-студії «ВебКузня»</h1>
+ <p>Ліцей «Обрій» замовив у нашої студії частину нового шкільного сайту — <b>онлайн-форму запису учнів на гуртки й секції</b>. Ви приєднуєтеся до команди стажером. Виконуйте тікети (задачі) на дошці, отримуйте підвищення — і разом ми зберемо форму, якою користуватимуться всі учні ліцею.</p>
+ <div class="ladder">${LV.map((l,k)=>`<div class="step" style="border-color:${l.c}55"><b style="color:${l.c}">${lvBadge(k)}</b><span>Спринт ${k+1} · 4 тікети</span><span class="cap" style="color:${l.c}">до ${l.cap}</span><span>максимальна оцінка</span></div>`).join('')}</div>
+ <ul class="rules"><li>Спринт (sprint — етап роботи) складається з 4 тікетів різних типів. Наступний спринт відкривається після підвищення.</li><li><b>Підвищення</b> дають, коли всі тікети спринту перевірено й набрано достатньо балів: до Junior — щонайменше ${fmtP(4*PROMO[0])} з 4, до Middle — щонайменше ${fmtP(4*PROMO[1])} з 4.</li><li>Перевірити можна лише тікет із відповіддю: порожня перевірка не рахується.</li><li>На кожен тікет — <b>${MAXATT} спроби</b>. Після «Перевірити» видно лише кількість помилок; зараховується найкраща спроба.</li><li>Тікет повністю правильно — 1 бал, наполовину — 0,5, менше половини — 0,25.</li><li>Тікет можна почати заново або пропустити й повернутися до нього пізніше.</li><li>Проєкт можна здати замовникові в будь-який момент — оцінка залежатиме від статусу й балів.</li></ul></section>
+ <section class="card"><h3 style="margin-top:0">Ваша команда</h3><div class="team">${Object.keys(WHO).map(w=>`<div class="person">${avatar(w)}<div><b>${WHO[w].n}</b><small>${WHO[w].r}</small></div></div>`).join('')}</div>
+ <h3>Оформлення в студію</h3><div class="form-in"><label>Прізвище<input id="sn" autocomplete="family-name" value="${esc(S.me.sn)}"></label><label>Ім’я<input id="fn" autocomplete="given-name" value="${esc(S.me.fn)}"></label><label>Клас<input id="cl" placeholder="11-А" value="${esc(S.me.cl)}"></label></div>
+ <div class="err" id="e"></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn main" id="go">Почати стажування →</button>${has?`<button class="btn" id="cont">Продовжити роботу (${esc(S.me.sn)} ${esc(S.me.fn)})</button>`:''}</div></section></div>`;
+ $('#go').onclick=()=>{const sn=$('#sn').value.trim(),fn=$('#fn').value.trim(),cl=$('#cl').value.trim();if(!sn||!fn||!cl){$('#e').textContent='Заповніть прізвище, ім’я та клас.';return}
+  const start=()=>{const same=has&&S.me.sn===sn&&S.me.fn===fn,r=same?(S.restarts||0)+1:0;S=fresh();S.me={sn,fn,cl};S.restarts=r;regLog();go('board')};
+  if(has)modal('<h3>Почати з нуля?</h3><p>Попередній прогрес у цьому браузері буде видалено, а спроби почнуть рахуватися заново. Учитель бачить кожен новий старт і кількість перезапусків.</p>',[{t:'Скасувати'},{t:'Почати заново',c:'main',f:start}]);else start()};
+ if(has)$('#cont').onclick=()=>go('board')}
+
+function tkState(i){const t=S.t[i];if(!open(i))return['Заблоковано','var(--bd2)'];if(t.best&&t.best.p===1)return['Готово ✔','var(--ok)'];if(t.att>=MAXATT)return['Закрито · спроби вичерпано','var(--mu)'];if(t.att>0)return['Перевірено · можна покращити','var(--ac2)'];if(t.skip)return['Пропущено','var(--wa)'];return['Новий','var(--act)']}
+const dots=n=>`<span class="dots" title="Використано спроб: ${n} з ${MAXATT}">${Array.from({length:MAXATT},(x,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;
+function mockHtml(anim){const vis=i=>S.t[i].att>0;return`<div class="brw"><div class="bar"><i></i><i></i><i></i><span class="url">https://obrii.example/gurtky/zapys</span></div><div class="site" inert><header>🏫 Ліцей «Обрій» <small>Гуртки та секції</small></header><div class="pg">${MKORD.map(i=>vis(i)?`<div class="mk ${anim&&!S.seen.includes(i)?'new':''}">${MK[i]}</div>`:`<div class="mk ph">🔒 Блок з’явиться після перевірки тікета ${T[i].id}</div>`).join('')}</div></div></div>`}
+function drawBoard(){const k=S.lvl,si=sprintInfo(k);
+ $('#stage').innerHTML=`<div class="bhead"><div><h2>Дошка задач</h2><p>Проєкт «Форма запису на гуртки» · статус: <b style="color:${LV[k].c}">${LV[k].full}</b> · максимальна оцінка зараз: <b>${LV[k].cap}</b></p></div><button class="btn main" id="fin">📦 Здати проєкт замовнику</button></div>
+ <div class="bgrid"><div>${[0,1,2].map(sp=>{const lock=sp>S.lvl,inf=sprintInfo(sp);return`<section class="sprint ${lock?'lock':''}"><div class="shead">${lvBadge(sp)}<h3>Спринт ${sp+1}</h3><span class="sp">${lock?'🔒 закрито':`перевірено ${inf.checked} з ${inf.max}`}</span></div>
+  ${lock?`<div class="lockmsg">Відкриється після підвищення до статусу ${LV[sp].full}. Максимальна оцінка в цьому статусі — ${LV[sp].cap}.</div>`:`<div class="tks">${T.map((t,i)=>t.sp!==sp?'':(()=>{const[s,c]=tkState(i);return`<button type="button" class="tk" data-t="${i}" style="--st:${c}"><span class="row"><span class="id">${t.id}</span>${WHO[t.who].e}<span class="kind">${esc(t.kind)}</span></span><b>${esc(t.title)}</b><span class="stt">${s}${S.t[i].att?dots(S.t[i].att):''}</span></button>`})()).join('')}</div>`}
+  ${!lock&&sp===S.lvl&&sp<2?`<div class="promo">До підвищення до <b>${LV[sp+1].n}</b>: перевірити всі тікети спринту й набрати ≥ ${fmtP(inf.need)} з ${inf.max} балів. Зараз: <b>${fmtP(inf.P)}</b> бала.<div class="pbar"><i style="width:${Math.min(100,inf.P/inf.need*100)}%"></i></div></div>`:''}</section>`}).join('')}</div>
+ <aside class="mock"><h3>Макет: сторінка запису ліцею</h3><p>Кожен перевірений тікет додає на сторінку новий блок.</p>${mockHtml(true)}</aside></div>`;
+ $$('[data-t]').forEach(b=>b.onclick=()=>go('ticket',+b.dataset.t));$('#fin').onclick=finish;
+ T.forEach((t,i)=>{if(S.t[i].att>0&&!S.seen.includes(i))S.seen.push(i)});save()}
+
+function fbHtml(i){const t=S.t[i];if(!t.fb)return'';const f=t.fb,left=MAXATT-t.att;
+ return`<div class="fb ${f.n?'no':'ok'}"><b class="big">${f.n?`Кількість ${f.unit||'помилок'}: ${f.n}`:'Помилок немає!'}</b><p><b>${f.msg}</b></p><p class="muted">${f.n?(left>0&&!closedT(i)?`Залишилося спроб: ${left}. Виправте відповіді й перевірте ще раз — зарахується найкраща спроба.`:'Спроби вичерпано — тікет закрито. Зараховано найкращу спробу.'):'Тікет закрито.'}</p></div>`}
+function renderBody(){if(RO){RO.disconnect();RO=null}const i=S.cur,t=T[i],st=S.t[i];const tb=$('#tb');tb.innerHTML=t.view(st.a);t.bind&&t.bind(st.a,i);const lk=closedT(i);tb.inert=lk;tb.classList.toggle('lock',lk)}
+function rer(){if(S.scr!=='ticket')return;const y=scrollY;renderBody();scrollTo(0,y)}
+function drawTicket(){const i=S.cur,t=T[i],st=S.t[i],w=WHO[t.who],lk=closedT(i);
+ const prevI=i-1>=0&&open(i-1)?i-1:-1,nextI=i+1<T.length&&open(i+1)?i+1:-1;
+ $('#stage').innerHTML=`<div class="crumbs"><button class="btn ghost" id="back">← Дошка задач</button><span>Спринт ${t.sp+1} · ${LV[t.sp].n}</span></div>
+ <article class="card ticket"><div class="thead"><span class="id">${t.id}</span><span class="chip-k">${esc(t.kind)}</span><span class="att">Спроби: ${dots(st.att)} ${st.att} з ${MAXATT}</span></div>
+ <h2>${esc(t.title)}</h2><div class="msg">${avatar(t.who)}<div style="flex:1"><div class="who"><b>${w.n}</b> · <span>${w.r}</span></div><div class="bubble">${t.msg}</div></div></div>
+ ${lk?`<div class="locknote">🔒 Тікет закрито${st.best&&st.best.p===1?' — виконано без помилок':' — спроби вичерпано'}. Відповіді можна переглянути, але не змінити.</div>`:''}
+ <div id="tb"></div><div id="fb">${fbHtml(i)}</div>
+ <div class="actions"><button class="btn main" id="chk" ${lk?'disabled':''}>Перевірити</button><button class="btn" id="rst" ${lk?'disabled':''}>⟲ Почати заново</button><button class="btn" id="skp" ${lk||st.att?'disabled':''}>Пропустити ⤼</button>
+ <span class="push"><button class="btn" id="prv" ${prevI<0?'disabled':''}>← Попередній</button><button class="btn" id="nxt">${nextI<0?'До дошки →':'Далі →'}</button></span></div></article>`;
+ renderBody();
+ $('#back').onclick=()=>go('board');
+ $('#chk').onclick=()=>check(i);
+ $('#rst').onclick=()=>modal('<h3>Почати тікет заново?</h3><p>Відповіді в цьому тікеті буде очищено. Кількість використаних спроб не зміниться.</p>',[{t:'Скасувати'},{t:'Очистити',c:'main',f:()=>{st.a=t.init();st.fb=null;save();drawTicket()}}]);
+ $('#skp').onclick=()=>{st.skip=true;save();nextI<0?go('board'):go('ticket',nextI)};
+ $('#prv').onclick=()=>prevI>=0&&go('ticket',prevI);
+ $('#nxt').onclick=()=>{if(!st.att)st.skip=true;nextI<0?go('board'):go('ticket',nextI)}}
+
+function isEmpty(i){const a=S.t[i].a,init=T[i].init();
+ if(typeof a==='string')return a.replace(/<!--[\s\S]*?-->/g,'').trim()===''||a.trim()===String(init).trim();
+ if(JSON.stringify(a)===JSON.stringify(init))return true;
+ if(Array.isArray(a))return!a.length;
+ return!Object.values(a).some(v=>Array.isArray(v)?v.length:v!==undefined&&v!==null&&v!=='')}
+function check(i){const t=T[i],st=S.t[i];if(closedT(i))return;
+ if(isEmpty(i)){modal(`<h3>Спершу виконайте завдання</h3><p>${typeof st.a==='string'?'Код ще не змінено — внесіть зміни в редакторі, а потім перевіряйте.':Array.isArray(st.a)&&T[i].id==='ВК-104'?'Рядки ще стоять у початковому порядку — перемістіть їх, а потім перевіряйте.':'Ви ще не дали жодної відповіді.'}</p><p class="muted">Порожня перевірка не рахується й не забирає спробу.</p>`,[{t:'Зрозуміло',c:'main'}]);return}
+ const r=t.grade(st.a),p=pts(r.ok/r.tot),n=r.tot-r.ok;st.att++;st.skip=false;
+ if(!st.best||p>st.best.p||(p===st.best.p&&r.ok>=st.best.ok))st.best={p,ok:r.ok,tot:r.tot,err:r.err};
+ st.fb={n,unit:r.unit,msg:n?pick(MOT):pick(PRZ)};save();drawTicket();$('#fb').scrollIntoView({block:'nearest',behavior:'smooth'});
+ setTimeout(()=>afterCheck(i),350)}
+function afterCheck(i){const k=T[i].sp;
+ if(k===S.lvl&&k<2){const s=sprintInfo(k);if(s.checked<s.max)return;
+  if(s.P>=s.need){S.lvl++;save();topbar();
+   modal(`<div class="big">${k===0?'⚡':'🚀'}</div><h3>Підвищення: ${LV[S.lvl].full}!</h3><p>${WHO.lead.n}: «Спринт ${k+1} закрито — ${fmtP(s.P)} з ${s.max} балів. Вітаю з новим статусом!»</p><p>Відкрито <b>спринт ${S.lvl+1}</b>. Максимальна оцінка тепер — <b>${LV[S.lvl].cap}</b>. Тікети спринту ${k+1}, де ще є спроби, можна покращувати й далі.</p>`,[{t:'Залишитися тут'},{t:'До дошки задач',c:'main',f:()=>go('board')}])}
+  else if(s.canImprove)modal(`<h3>Поки без підвищення</h3><p>Усі тікети спринту ${k+1} перевірено: ${fmtP(s.P)} з ${s.max} балів. Для підвищення до ${LV[k+1].n} потрібно щонайменше <b>${fmtP(s.need)}</b>.</p><p>У деяких тікетах ще є спроби — виправте помилки й перевірте знову.</p>`,[{t:'Зрозуміло',c:'main'}]);
+  else endModal();return}
+ if(stuck()){endModal();return}
+ if(S.lvl===2&&T.every((x,j)=>S.t[j].att>0)&&k===2&&sprintInfo(2).checked===4&&!S.t[i].doneMsg){S.t[i].doneMsg=1;save();modal('<div class="big">🏁</div><h3>Усі тікети перевірено!</h3><p>Можна ще покращити тікети, де лишилися спроби, або здати проєкт замовнику.</p>',[{t:'Залишитися'},{t:'Здати проєкт',c:'main',f:finish}])}}
+
+/* робота завершена: спроби вичерпано й підвищення неможливе (або в статусі Middle закрито всі тікети) */
+function stuck(){if(S.final)return null;const k=S.lvl;
+ if(k<2){const s=sprintInfo(k);return s.checked===s.max&&!s.canImprove&&s.P<s.need?{type:'fail',k,s}:null}
+ return T.every((t,i)=>closedT(i))?{type:'done',k}:null}
+function endModal(){const x=stuck();if(!x||$('.ov'))return;const tt=totals();
+ const why=x.type==='fail'?`<p>Спроби в усіх тікетах спринту ${x.k+1} вичерпано: <b>${fmtP(x.s.P)} з ${x.s.max}</b> балів, а для підвищення до ${LV[x.k+1].n} потрібно щонайменше <b>${fmtP(x.s.need)}</b>. Підвищити статус у цій спробі вже неможливо.</p>`:`<p>Усі тікети закрито — покращувати більше нічого.</p>`;
+ modal(`<div class="big">🏁</div><h3>Роботу завершено</h3>${why}<p>Поточний результат: статус <b>${LV[x.k].n}</b>, бали <b>${fmtP(tt.P)} з ${tt.M}</b>, орієнтовна оцінка <b>${tt.g}</b> з 12 (максимум для статусу — ${tt.cap}).</p>
+ <p>Оберіть, що робити далі:</p><ul><li><b>Завершити</b> — перейти до підсумку й надіслати результат учителю.</li><li><b>Почати з початку</b> — усі результати й спроби буде обнулено. Кількість таких перезапусків побачить учитель${S.restarts?` (зараз: ${S.restarts})`:''}.</li></ul>`,
+ [{t:'⟲ Почати з початку',f:restart},{t:'Завершити й побачити підсумок',c:'main',f:()=>{S.final=true;go('sum')}}])}
+function regLog(){try{fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',keepalive:true,body:JSON.stringify({key:KEY,task:'Реєстрація',fields:{'ПІБ учня':S.me.sn+' '+S.me.fn,'Клас':S.me.cl,'Назва проєкту':TASK}})}).catch(()=>{})}catch(x){}}
+function restart(){const me=S.me,r=(S.restarts||0)+1;S=fresh();S.me=me;S.restarts=r;save();regLog();go('board')}
+function finish(){const ids=T.map((t,i)=>i).filter(open),miss=ids.filter(i=>!S.t[i].att),k=S.lvl,tt=totals();
+ const confirmFinal=()=>modal(`<h3>Здати проєкт замовнику?</h3><p>Статус: <b>${LV[k].full}</b> · максимальна оцінка ${LV[k].cap}.</p><p>Після здачі змінити відповіді вже не вийде.</p>`,[{t:'Ще попрацюю'},{t:'Здати проєкт',c:'main',f:()=>{S.final=true;go('sum')}}]);
+ if(miss.length)modal(`<h3>Є невиконані тікети</h3><p>Ці тікети ще не перевірено — їх буде зараховано як 0 балів:</p><ul>${miss.map(i=>`<li><b>${T[i].id}</b> ${esc(T[i].title)}</li>`).join('')}</ul><p>Поверніться до них, щоб отримати вищу оцінку.</p>`,[{t:'Однаково здати',f:confirmFinal},{t:'Повернутися до виконання',c:'main',f:()=>go('ticket',miss[0])}]);
+ else confirmFinal()}
+
+function drawSum(){const tt=totals(),E=errList(),k=S.lvl;
+ $('#stage').innerHTML=`<div class="sgrid"><section class="card"><div class="kick">ПРОЄКТ ЗДАНО ЗАМОВНИКУ</div><h2 style="margin:6px 0 4px">${esc(S.me.sn)} ${esc(S.me.fn)}</h2><p class="muted" style="margin:0 0 14px">Клас ${esc(S.me.cl)} · ${new Date().toLocaleDateString('uk-UA')}</p>
+ <p style="margin:0">Статус: ${lvBadge(k)} <span class="muted">— максимальна оцінка ${tt.cap}</span></p>
+ <div style="display:flex;align-items:flex-end;gap:12px;margin:12px 0 4px"><span class="grade">${tt.g}</span><span style="padding-bottom:12px"><b>з 12</b><br><span class="muted">орієнтовна оцінка</span></span></div>
+ <p style="margin:0">Бали: <b>${fmtP(tt.P)} з ${tt.M}</b> (${tt.pc}%)</p><p style="margin:4px 0 0">Перезапусків проєкту: <b>${S.restarts||0}</b></p>
+ <p class="note">Остаточна оцінка вчителя враховуватиме також кількість допущених помилок і виконаних спроб.</p>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn main" id="send">📨 Надіслати результат учителю</button><button class="btn" id="save">💾 Зберегти результат</button></div><p id="sm" class="muted"></p>
+ <h3>Макет сторінки</h3>${mockHtml(false)}</section>
+ <section class="card"><h3 style="margin-top:0">Тікети</h3><table class="tbl"><tr><th>Тікет</th><th>Завдання</th><th class="n">Бали</th><th class="n">Спроби</th></tr>${T.map((t,i)=>open(i)?`<tr><td class="mono" style="color:var(--act)">${t.id}</td><td>${esc(t.title)}<br><span class="muted" style="font-size:13px">${esc(t.kind)}</span></td><td class="n">${S.t[i].att?fmtP(S.t[i].best.p):'—'} / 1</td><td class="n">${S.t[i].att}</td></tr>`:'').join('')}</table>
+ <h3>Помилки (${E.length})</h3>${E.length?`<ul class="errs">${E.map(e=>`<li>${fmt(e)}</li>`).join('')}</ul>`:'<p style="color:var(--ok);font-weight:700">Без помилок! 🎉</p>'}</section></div>`;
+ $('#send').onclick=e=>send(e.target);$('#save').onclick=saveImg}
+
+/* ================= підсумок: зображення й надсилання ================= */
+function sumLines(){const tt=totals(),E=errList();return{tt,E,L:[['Статус: '+LV[S.lvl].full+' (максимальна оцінка '+tt.cap+')',0],['Бали: '+fmtP(tt.P)+' з '+tt.M+' ('+tt.pc+'%)',0],['Перезапусків проєкту: '+(S.restarts||0),0],['Остаточна оцінка вчителя враховуватиме також кількість допущених помилок і виконаних спроб.',2],['',0],['Тікети:',1],...tt.ids.map(i=>['   '+T[i].id+' '+T[i].title+' — '+(S.t[i].att?fmtP(S.t[i].best.p):'0')+' з 1, спроб: '+S.t[i].att,0]),['',0],['Помилки ('+E.length+'):',1],...E.map(e=>['• '+plain(e),0])]}}
+function wrapTxt(x,t,w){const o=[];let c='';t.split(' ').forEach(s=>{const n=c?c+' '+s:s;if(x.measureText(n).width>w&&c){o.push(c);c=s}else c=n});o.push(c);return o}
+function canvas(){const{tt,L}=sumLines(),W=1000,c=document.createElement('canvas'),x=c.getContext('2d');x.font='17px Arial';const rows=[];L.forEach(([t,s])=>{x.font=(s===1?'bold 18px':s===2?'italic 16px':'17px')+' Arial';(t?wrapTxt(x,t,W-80):['']).forEach((r,k)=>rows.push([k&&t.startsWith('• ')?'   '+r:r,s]))});
+ c.width=W;c.height=190+rows.length*26+30;x.fillStyle='#ffffff';x.fillRect(0,0,W,c.height);
+ const g=x.createLinearGradient(0,0,W,0);g.addColorStop(0,'#7c5cff');g.addColorStop(1,'#22d3ee');x.fillStyle=g;x.fillRect(0,0,W,150);
+ x.fillStyle='#fff';x.font='bold 15px Arial';x.fillText('ВебКузня · '+TASK,40,36);x.font='bold 30px Arial';x.fillText(S.me.sn+' '+S.me.fn+', клас '+S.me.cl,40,80);x.font='17px Arial';x.fillText(new Date().toLocaleString('uk-UA'),40,112);
+ x.font='bold 64px Arial';x.textAlign='right';x.fillText(String(tt.g),W-40,96);x.font='16px Arial';x.fillText('з 12',W-40,124);x.textAlign='left';
+ rows.forEach(([r,s],k)=>{x.font=(s===1?'bold 18px':s===2?'italic 16px':'17px')+' Arial';x.fillStyle=s===2?'#5b6478':'#1d2433';x.fillText(r,40,190+k*26)});return c}
+function saveImg(){canvas().toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='html_forms_'+(S.me.sn+'_'+S.me.fn).replace(/[^\p{L}\p{N}_-]+/gu,'_')+'.png';document.body.append(a);a.click();a.remove();$('#sm').textContent='Зображення збережено ✔'})}
+async function send(b){const{tt,E}=sumLines();const F={'Прізвище':S.me.sn,"Ім'я":S.me.fn,'Клас':S.me.cl,'Статус':LV[S.lvl].full,'Макс. оцінка статусу':tt.cap,'Бали':tt.P,'Макс. балів':tt.M,'Відсоток':tt.pc,'Орієнтовна оцінка (12-бальна)':tt.g,'Кількість перезапусків':S.restarts||0};
+ T.forEach((t,i)=>{F[t.id+' '+t.kind]=open(i)?(S.t[i].att?fmtP(S.t[i].best.p):'0')+'/1 (спроб: '+S.t[i].att+')':'не відкрито'});
+ F['Кількість помилок']=E.length;F['Допущені помилки']=E.map(plain).join('\n')||'немає';
+ b.disabled=true;$('#sm').textContent='Надсилання…';
+ try{await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({key:KEY,task:TASK,fields:F,image:{name:'html_forms_'+S.me.sn+'_'+S.me.fn+'.png',data:canvas().toDataURL('image/png').split(',')[1]}})});$('#sm').textContent='Результат надіслано вчителю ✔';S.sent=true;save()}
+ catch(e){b.disabled=false;$('#sm').textContent='Не вдалося надіслати. Перевірте інтернет і спробуйте ще раз.'}}
+
+/* ================= запуск ================= */
+if(!S)S=fresh();
+if(S.final)S.scr='sum';else if(!['start','board','ticket'].includes(S.scr)||!S.me.sn)S.scr='start';
+if(S.scr==='ticket'&&!open(S.cur))S.scr='board';
+draw();
+}
+</script>
+</body>
+</html>
